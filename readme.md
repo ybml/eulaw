@@ -2,7 +2,6 @@
 Treaties of the European Union
 
 eulaw.R
-
 * ecsc.R
   + ecsc.csv and 1951.rds
 * euratom.R
