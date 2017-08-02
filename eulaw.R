@@ -2,9 +2,24 @@
 # Treaties of the European Union
 # --------------------------------------------------------------------------- #
 
+# load packages
+library(rvest)
+library(purrr)
+library(purrrlyr)
+library(stringr)
+library(tidyr)
+library(dplyr)
+
+rm(list  = ls())
+source("src/utils.R")
+
 # ECSC ---------------------------------------------------------------------- #
 
+source("src/ecsc.R")
+
 # EURATOM (Treaty of Rome) -------------------------------------------------- #
+
+source("src/euratom.R")
 
 # EEC (Treaty of Rome) ------------------------------------------------------ #
 
