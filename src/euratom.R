@@ -29,7 +29,6 @@ euratom_toc = euratom_toc[,c("toctext", "title", "chapter", "section")]
 names(euratom_toc)[names(euratom_toc)=="toctext"] <- "text"
 
 # trim whitespace
-trim = function (x) gsub("^\\s+|\\s+$", "", x)
 euratom_toc$text = trim(euratom_toc$text)
 euratom$text = trim(euratom$text)
 

@@ -29,7 +29,6 @@ ecsc_toc = ecsc_toc[,c("toctext", "title", "chapter")]
 names(ecsc_toc)[names(ecsc_toc)=="toctext"] <- "text"
 
 # trim whitespace
-trim = function (x) gsub("^\\s+|\\s+$", "", x)
 ecsc_toc$text = trim(ecsc_toc$text)
 ecsc$text = trim(ecsc$text)
 
