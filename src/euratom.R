@@ -10,6 +10,7 @@ treaty = euratom %>%
   html_text()
 
 euratom = data.frame(text = treaty)
+rm(treaty)
 
 euratom$index = seq_len(nrow(euratom))
 
@@ -103,3 +104,5 @@ ecsc_euratom <- bind_rows(ecsc, euratom)
 
 # save ---------------------------------------------------------------------- #
 saveRDS(ecsc_euratom, "data/1957_1.rds")
+
+rm(euratom, ecsc, ecsc_euratom)

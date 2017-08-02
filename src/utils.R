@@ -38,6 +38,6 @@ get_toc <- function(html){
   return(toc)
 }
 
-# trim whitespace ----------------------------------------------------------- #
+# trim: trim whitespace ----------------------------------------------------- #
 
 trim = function (x) gsub("^\\s+|\\s+$", "", x)

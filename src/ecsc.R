@@ -10,6 +10,7 @@ treaty = ecsc %>%
   html_text()
 
 ecsc = data.frame(text = treaty)
+rm(treaty)
 
 ecsc$index = seq_len(nrow(ecsc))
 
@@ -85,3 +86,5 @@ ecsc = ecsc %>%
 
 # save ---------------------------------------------------------------------- #
 saveRDS(ecsc, "data/1951.rds")
+
+rm(ecsc)

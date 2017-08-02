@@ -1,16 +1,15 @@
 # --------------------------------------------------------------------------- #
-# Treaty establishing a European Economic Community (EEC)
+# Merger Treaty
 # --------------------------------------------------------------------------- #
 
 # August 2, 2017
-eec = read_html("https://en.wikisource.org/wiki/Treaty_establishing_the_European_Economic_Community")
+merger = read_html("https://en.wikisource.org/wiki/Merger_Treaty")
 
-treaty = eec %>%
+treaty = merger %>%
   html_nodes("h2,h3,h4,h5,p,li,dt,dd") %>%
   html_text()
 
-eec = data.frame(text = treaty)
-rm(treaty)
+merger = data.frame(text = treaty)
 
 eec$index = seq_len(nrow(eec))
 
@@ -103,5 +102,3 @@ ecsc_euratom_eec <- bind_rows(ecsc_euratom, eec)
 
 # save ---------------------------------------------------------------------- #
 saveRDS(ecsc_euratom_eec, "data/1957_2.rds")
-
-rm(eec, ecsc_euratom, ecsc_euratom_eec)
