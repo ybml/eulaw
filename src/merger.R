@@ -269,7 +269,7 @@ to_be_changed = to_be_changed[!to_be_changed$euratom_id == "5.X.X.191", ]
 # Protocol on the Statute of the Court of Justice annexed to the Treaty establishing the European Coal and Steel Community
 # Protocol on the Statute of the European Investment Bank annexed to the Treaty establishing the European Economic Community
 
-# article 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 29 ------------------------ #
+# articles 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 29 ----------------------- #
 
 sub_merger = subset(merger, merger$merger_id == "5.29" | merger$merger_id == "5.30" | merger$merger_id == "5.31" |
                             merger$merger_id == "5.32" | merger$merger_id == "5.33" | merger$merger_id == "5.34" |
