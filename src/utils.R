@@ -41,3 +41,33 @@ get_toc <- function(html){
 # trim: trim whitespace ----------------------------------------------------- #
 
 trim = function (x) gsub("^\\s+|\\s+$", "", x)
+
+
+# ideas for functions
+
+# repeal_article: repeal whole article -------------------------------------- #
+
+# add_article: add new article ---------------------------------------------- #
+
+# amend_article: add new text to a article ---------------------------------- #
+
+# insert_article: add article to existing one  ------------------------------ #
+
+# repeal_string: repeal part of article, e.g. paragraph --------------------- #
+
+# change_string: alter a part of article, e.g. paragraph or word ------------ #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
