@@ -44,6 +44,12 @@ trim = function (x) gsub("^\\s+|\\s+$", "", x)
 
 
 # ideas for functions
+# repeal_article: eine Funktion, in die man die Artikelnummer und den Vertrag einfügt (am Besten mehrere als Liste), und die dann die ID findet und den Artikel löscht. 
+#	add_article: eine Funktion, die einen neuen Artikel hinzufügt
+#	amend_article: eine Funktion, die den Artikel findet und den zusätzlichen Text hinzufügt.
+#	insert_article: wenn zu dem Artikel 78, die Artikel 78a, 78b kommen, dann werden hier Strings als neue Artikel hinzugefügt
+#	repeal_string: die Funktion findet einen String in dem Artikel und löscht ihn
+#	change_string: die Funktion findet einen String und ersetzt ihn durch einen neuen, der gegeben wird. 
 
 # repeal_article: repeal whole article -------------------------------------- #
 
