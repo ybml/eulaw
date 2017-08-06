@@ -9,27 +9,30 @@ library(purrrlyr)
 library(stringr)
 library(tidyr)
 library(dplyr)
+library(readr)
 
 rm(list  = ls())
 source("src/utils.R")
 
 # ECSC ---------------------------------------------------------------------- #
 
-source("src/ecsc.R")
+# source("src/ecsc.R")
 
 # EURATOM (Treaty of Rome) -------------------------------------------------- #
 
-source("src/euratom.R")
+# source("src/euratom.R")
 
 # EEC (Treaty of Rome) ------------------------------------------------------ #
 
-source("src/eec.R")
+# source("src/eec.R")
 
 # Merger Treaty ------------------------------------------------------------- #
 
 source("src/merger.R")
 
 # SEA ----------------------------------------------------------------------- #
+
+# source("src/sea.R")
 
 # TEU ----------------------------------------------------------------------- #
 

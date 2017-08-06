@@ -58,7 +58,7 @@ apply_changes <- function(df, which_treaty){
   retdf <- bind_rows(pieces_mod) %>% 
     select(-splitvar) %>% # remove other unnecessary columns here as well
     # mutate(current_id = if_else(is.na(merger_id), current_id, merger_id)) # current id
-  return(bind_rows(pieces_mod) %>% select(-splitvar))
+    return(bind_rows(pieces_mod) %>% select(-splitvar))
 }
 
 # I. MERGER
@@ -80,6 +80,3 @@ t65 <- full_join(t57, merger_changes, by = c("treaty", "current_id"))
 
 # 3. apply and save
 t65_2 <- apply_changes(t65, "merger")
-
-
-

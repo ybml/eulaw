@@ -77,8 +77,23 @@ merger = merger %>%
 
 # changes ------------------------------------------------------------------- #
 
+# read data
+merger_changes <- read_csv("data/changes_merger.csv")
+t57 <- read_rds("data/1957_2.rds")
 
-# save ---------------------------------------------------------------------- #
+# prepare changes data frame 
+merger_changes <- merger_changes %>% 
+  select(treaty, current_id, action, old_txt, new_txt, merger_id = new_id) %>% 
+  mutate(new_txt = if_else(is.na(new_txt) & !is.na(old_txt), "", new_txt)) %>% 
+  fill(treaty)
+
+# join merger_changes
+t65 <- full_join(t57, merger_changes, by = c("treaty", "current_id"))
+
+# apply and save
+t65_2 <- apply_changes(t65, "merger")
+
+# apply and save ------------------------------------------------------------ #
 saveRDS(to_be_changed, "data/1965.rds")
 
 
