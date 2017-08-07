@@ -2,6 +2,18 @@
 # Merger Treaty
 # --------------------------------------------------------------------------- #
 
+source("src/utils.R")
+
+# load packages
+require(rvest)
+require(purrr)
+require(purrrlyr)
+require(stringr)
+require(tidyr)
+require(dplyr)
+require(readr)
+
+
 # August 2, 2017
 merger = read_html("https://en.wikisource.org/wiki/Merger_Treaty")
 
@@ -62,39 +74,56 @@ merger = merger %>%
 
 merger = merger[order(merger$article),]
 
-write.csv(merger, file = "data/merger.csv")
 
 # create id variable -------------------------------------------------------- #
 
 merger = merger %>% 
-  unite(merger_id, chapter:article, sep = ".")
+  unite(merger_id, chapter:article, sep = ".", remove = FALSE)
 
 merger$merger_id = str_replace_all(merger$merger_id, "NA", "X")
 merger$treaty = "merger"
 
-merger = merger %>% 
-  select(treaty, merger_id, text)
+write_csv(merger, "data/merger.csv")
+
+# merger = merger %>% 
+#   ungroup() %>% 
+#   select(treaty, merger_id, text)
 
 # changes ------------------------------------------------------------------- #
 
 # read data
-merger_changes <- read_csv("data/changes_merger.csv")
+
+# read back in merger
+merger <- read_csv("data/merger.csv", col_types = "ccccc")
+
+# download google sheet data
+dl_ws("merger")
+
+# changes
+merger_changes <- read_csv("data/merger_changes.csv", col_types = "ccccccc")
+merger_orig <- read_csv("data/merger_orig.csv", col_types = "cc")
+
+# no global changes in merger 
+
 t57 <- read_rds("data/1957_2.rds")
 
 # prepare changes data frame 
 merger_changes <- merger_changes %>% 
-  select(treaty, current_id, action, old_txt, new_txt, merger_id = new_id) %>% 
   mutate(new_txt = if_else(is.na(new_txt) & !is.na(old_txt), "", new_txt)) %>% 
-  fill(treaty)
+  fill(treaty) %>% 
+  fill(merger_change_id)
 
 # join merger_changes
 t65 <- full_join(t57, merger_changes, by = c("treaty", "current_id"))
 
-# apply and save
-t65_2 <- apply_changes(t65, "merger")
+# apply changes
+t65 <- apply_changes(t65, merger_id)
+
+# add original articles
+t65 <- add_orig(merger_orig, merger, t65)
 
 # apply and save ------------------------------------------------------------ #
-saveRDS(to_be_changed, "data/1965.rds")
+saveRDS(t65, "data/1965.rds")
 
 
 

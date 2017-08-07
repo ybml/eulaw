@@ -44,59 +44,132 @@ trim = function (x) gsub("^\\s+|\\s+$", "", x)
 
 # apply_changes: ------------------------------------------------------------ #
 
-apply_changes <- function(df, which_treaty){
+apply_changes <- function(df, which_treaty_id){
   
+  wt_id_q <- enquo(which_treaty_id)
+  wt_id_name <- quo_name(wt_id_q)
+
   apply_change_r <- function(row, ...){
-    if(is.na(row$action)){
+    if(is.na(row$action)){ # NA -> no action required
       return(row)
-    } else if(row$action == "repeal"){
+    } else if(row$action == "repeal"){ # delete text and treaty_id <- NULL
       row$text = ""
-      row[, paste0(which_treaty, "_id")] <- "NULL"
-    } else if(row$action == "repl_txt"){
+      row[, wt_id_name] <- "NULL"
+    } else if(row$action == "repl_txt"){ # replace text
       row$text <- str_replace_all(row$text, row$old_txt, row$new_txt)
-    } else if(row$action %in% c("fork_ent", "add", "repl_ent")){
+    } else if(row$action %in% c("fork_ent", "add", "repl_ent")){ # copy new_txt to text
       row$text <- row$new_txt
-    } else if(row$action == "amend"){
+    } else if(row$action == "amend"){ # add new text at end of text
       row$text <- paste(row$text, row$new_txt, sep = " ")
     }
     return(row)
   }
   
-  # split
+  # split data frame into list of data frames based on current_id 
+  # for most entities there is only 1 change, so that its data frame will only have 1 row
   df$splitvar <- paste(df$treaty, df$current_id, sep = "-")
   pieces <- split(df, df$splitvar)
   
-  # map to pieces
+  # for every current_id piece, apply the changes
   pieces_mod <- map(pieces, .f = function(piece){
-    print(piece)
-    if(nrow(piece) <= 1){
+    # print(piece) # for DEBUG
+    
+     if(nrow(piece) <= 1){
+ 
+      # ONLY ONE CHANGE 
+      # it's trivial - just apply it.
       return(apply_change_r(piece))
+      
     } else{
+      
+      # MORE THAN ONE CHANGE
+      # if there is more than one change, it's a bit more tricky.
+
       if(all(piece$action == "add")||all(piece$action == "fork_ent")||all(piece$action == "repl_ent")){
+        
+        # we can have changes, that are independent of each other, e.g. adding a new
+        # article, forking an existing article etc. For all those, the where_id
+        # will be the same (e.g. None for add), but the insertions do not depend on 
+        # each other, hence, we can vectorize this. 
+        
         piece$text <- piece$new_txt 
         return(piece)
+        
       } else if(all(piece$action %in% c("amend", "repl_txt"))){
-        # iteratively 
-        r <- apply_change_r(piece[1, ])
+        
+        # on the other hand we can have changes that build on each other, e.g.
+        # multiple replace text or amend operations. Those have to be executed
+        # after one another, taking the modified text as input for the next one.
+
+        r <- apply_change_r(piece[1, ]) # first change
+        
         for(i in 2:nrow(piece)){
-          piece$text[i] <- r$text
-          r <- apply_change_r(piece[i, ])
+          piece$text[i] <- r$text # take text of previous change 
+          r <- apply_change_r(piece[i, ]) # execute next change
         }
         return(r)
+        
       } else{
+        
+        # if we have combinations of actions within one piece that are not covered
+        # so far, we throw an error and revisit this function 
         stop("this case is not covered so far!", call. = TRUE)
+        
       }
     }
   })
   
-  retdf <- bind_rows(pieces_mod) %>% 
-    select(-splitvar) %>% # remove other unnecessary columns here as well
-    # mutate(current_id = if_else(is.na(merger_id), current_id, merger_id)) # current id
-    return(bind_rows(pieces_mod) %>% select(-splitvar))
+  # we bind the modified pieces back together to a data frame and do some 
+  # post - processing 
+  retdf <- bind_rows(pieces_mod) %>% # bind together 
+    select(treaty, ends_with("id"), text) %>% # remove unnecessary columns 
+    mutate(current_id = if_else(is.na(!!wt_id_q), current_id, !!wt_id_q)) # current id
+  
+  return(retdf)
+}
+
+# lookup id --------------------------------------------------------------------
+# treaty_df: a data frame that contains the parsed treaty
+
+lookup_id <- function(article, treaty_df){
+  regex <- paste0(".+?\\.", article)
+  treaty_df %>% 
+    filter(str_detect(id, regex)) %>% 
+    pull(id)
+}
+
+# add_orig: --------------------------------------------------------------------
+add_orig <- function(orig_df, treaty_df, master_df){
+  treaty_df <- treaty_df %>% 
+    ungroup() %>% 
+    select(article, text, ends_with("id"))
+    
+  orig_df <- left_join(orig_df, treaty_df, by = "article")
+  master_df <- bind_rows(master_df, orig_df)
+  return(master_df %>% select(-article))
+}
+  
+
+# apply_global_changes: --------------------------------------------------------
+# function that applies global changes
+apply_global_changes <- function(change_df, df){
+  
 }
 
 
-
+# dl_ws: download sheets within a google sheet to data/ ------------------------
+# sheet_name is the name of the treaty and the google sheet, e.g. merger or sea
+dl_ws <- function(sheet_name){
+  require(googlesheets)
+  require(dplyr)
+  require(purrr)
+  s <- gs_title(sheet_name) # get access to google ws
+  map(gs_ws_ls(s), function(ws_name) {
+    s %>% 
+      gs_download(ws = ws_name, to = paste0("data/", sheet_name, "_", ws_name, ".csv"),
+                  overwrite = TRUE)
+  })
+}
 
 
 
