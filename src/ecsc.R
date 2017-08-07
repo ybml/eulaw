@@ -2,6 +2,15 @@
 # The Treaty establishing the European Coal and Steel Community (ECSC)
 # --------------------------------------------------------------------------- #
 
+# load packages
+require(rvest)
+require(purrr)
+require(purrrlyr)
+require(stringr)
+require(tidyr)
+require(dplyr)
+require(readr)
+
 # August 2, 2017
 ecsc = read_html("https://en.wikisource.org/wiki/The_Treaty_establishing_the_European_Coal_and_Steel_Community_(ECSC)")
 
@@ -71,17 +80,22 @@ ecsc = ecsc %>%
 
 ecsc = ecsc[order(ecsc$article),]
 
-write.csv(ecsc, file = "data/ecsc.csv")
 
 # create id variable -------------------------------------------------------- #
 
 ecsc = ecsc %>% 
-  unite(ecsc_id, title:article, sep = ".")
+  unite(ecsc_id, title:article, sep = ".", remove = FALSE)
 
 ecsc$ecsc_id = str_replace_all(ecsc$ecsc_id, "NA", "X")
 ecsc$treaty = "ecsc"
 
+ecsc <- ecsc %>% 
+  select(treaty, everything())
+
+write_csv(ecsc, "data/ecsc.csv")
+
 ecsc = ecsc %>% 
+  ungroup() %>% 
   select(treaty, ecsc_id, text)
 
 # save ---------------------------------------------------------------------- #

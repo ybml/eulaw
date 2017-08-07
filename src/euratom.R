@@ -2,6 +2,15 @@
 # Treaty establishing the European Atomic Energy Community (EURATOM)
 # --------------------------------------------------------------------------- #
 
+# load packages
+require(rvest)
+require(purrr)
+require(purrrlyr)
+require(stringr)
+require(tidyr)
+require(dplyr)
+require(readr)
+
 # August 2, 2017
 euratom = read_html("https://en.wikisource.org/wiki/Treaty_establishing_the_European_Atomic_Energy_Community")
 
@@ -82,25 +91,31 @@ euratom = euratom %>%
 
 euratom = euratom[order(euratom$article),]
 
-write.csv(euratom, file = "data/euratom.csv")
 
 # create id variable -------------------------------------------------------- #
 
 euratom = euratom %>% 
-  unite(euratom_id, title:article, sep = ".")
+  unite(euratom_id, title:article, sep = ".", remove = FALSE)
 
 euratom$euratom_id = str_replace_all(euratom$euratom_id, "NA", "X")
 euratom$treaty = "euratom"
 
-euratom = euratom %>% 
-  select(treaty, euratom_id, text)
+write_csv(euratom, "data/euratom.csv")
 
 # add to ecsc -------------------------------------------------------- #
+
+euratom = euratom %>% 
+  ungroup() %>% 
+  select(treaty, euratom_id, text)
 
 # read in ecsc
 ecsc <- readRDS("data/1951.rds")
 
 ecsc_euratom <- bind_rows(ecsc, euratom)
+
+# add ecsc ids to euratom_id
+ecsc_euratom <- ecsc_euratom %>% 
+  mutate(current_id = if_else(is.na(euratom_id), ecsc_id, euratom_id))
 
 # save ---------------------------------------------------------------------- #
 saveRDS(ecsc_euratom, "data/1957_1.rds")

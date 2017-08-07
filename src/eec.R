@@ -2,6 +2,15 @@
 # Treaty establishing a European Economic Community (EEC)
 # --------------------------------------------------------------------------- #
 
+# load packages
+require(rvest)
+require(purrr)
+require(purrrlyr)
+require(stringr)
+require(tidyr)
+require(dplyr)
+require(readr)
+
 # August 2, 2017
 eec = read_html("https://en.wikisource.org/wiki/Treaty_establishing_the_European_Economic_Community")
 
@@ -81,25 +90,30 @@ eec = eec %>%
 
 eec = eec[order(eec$article),]
 
-write.csv(eec, file = "data/eec.csv")
+
 
 # create id variable -------------------------------------------------------- #
 
 eec = eec %>% 
-  unite(eec_id, part:article, sep = ".")
+  unite(eec_id, part:article, sep = ".", remove = FALSE)
 
 eec$eec_id = str_replace_all(eec$eec_id, "NA", "X")
 eec$treaty = "eec"
 
-eec = eec %>% 
-  select(treaty, eec_id, text)
+write_csv(eec, "data/eec.csv")
 
 # add to previous ----------------------------------------------------------- #
+
+eec = eec %>% 
+  ungroup() %>% 
+  select(treaty, eec_id, text)
 
 # read 
 ecsc_euratom <- readRDS("data/1957_1.rds")
 
 ecsc_euratom_eec <- bind_rows(ecsc_euratom, eec)
+ecsc_euratom_eec <- ecsc_euratom_eec %>% 
+  mutate(current_id = if_else(is.na(current_id), eec_id, current_id))
 
 # save ---------------------------------------------------------------------- #
 saveRDS(ecsc_euratom_eec, "data/1957_2.rds")
