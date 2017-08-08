@@ -95,7 +95,13 @@ apply_changes <- function(df, which_treaty_id){
       # MORE THAN ONE CHANGE
       # if there is more than one change, it's a bit more tricky.
 
-      if(all(piece$action == "add")||all(piece$action == "fork_ent")||all(piece$action == "repl_ent")){
+      
+      if(all(is.na(piece$action))){
+        
+        # all are NA -> no action required. just return
+        return(piece)
+        
+      } else if(all(piece$action == "add")||all(piece$action == "fork_ent")||all(piece$action == "repl_ent")){
         
         # we can have changes, that are independent of each other, e.g. adding a new
         # article, forking an existing article etc. For all those, the where_id
@@ -164,6 +170,7 @@ lookup_id <- function(treaty_df, idvar, article){
   
 }
 
+
 # apply_global_changes: --------------------------------------------------------
 # function that applies global changes
 apply_global_changes <- function(change_df, df){
@@ -219,3 +226,32 @@ lookup_id_clip <- function(treaty_df, idvar, article){
   write_clip(id)
   return(id)
 }
+
+lookup_id_clip <- function(treaty_df, idvar, articles){
+  if (!require(clipr)){
+    stop("this version only works with clipr installed. Please use lookup_id instead.")
+  }
+  
+  if(!clipr_available()){
+    stop("your clipboard is not available. Check system dependencies in the CRAN documentation.")
+  }
+  
+  treaty_q <- enquo(treaty_df)
+  treaty_qn <- quo_name(treaty_q)
+  
+  if(!exists(treaty_qn)){
+    # read in csv
+    treaty_df <- read_csv(paste0("data/", treaty_qn, ".csv"))
+    treaty_df <- treaty_df %>% 
+      mutate_all(.funs = funs(as.character))
+  }
+  
+  id_q <- enquo(idvar)
+  regex <- paste0(".+?\\.", article, "$")
+  id <- treaty_df %>% 
+    filter(str_detect(!!id_q, regex) == TRUE) %>% 
+    pull(!!id_q)
+  write_clip(id)
+  return(id)
+}
+
