@@ -2,6 +2,16 @@
 # useful functions
 # --------------------------------------------------------------------------- #
 
+# load packages
+require(rvest)
+require(purrr)
+require(purrrlyr)
+require(stringr)
+require(tidyr)
+require(dplyr)
+require(readr)
+
+
 # get_toc: get table of content from wikisource ----------------------------- #
 
 get_toc <- function(html){
@@ -130,16 +140,31 @@ apply_changes <- function(df, which_treaty_id){
 
 # lookup id --------------------------------------------------------------------
 # treaty_df: a data frame that contains the parsed treaty
-
-lookup_id <- function(article, treaty_df){
-  regex <- paste0(".+?\\.", article)
-  treaty_df %>% 
-    filter(str_detect(id, regex)) %>% 
-    pull(id)
+# idvar: name of id variable, e.g. merger_id, specified not as a string
+lookup_id <- function(treaty_df, idvar, article){
+  
+  treaty_q <- enquo(treaty_df)
+  treaty_qn <- quo_name(treaty_q)
+  
+  if(!exists(treaty_qn)){
+    # read in csv
+    treaty_df <- read_csv(paste0("data/", treaty_qn, ".csv"))
+    treaty_df <- treaty_df %>% 
+      mutate_all(.funs = funs(as.character))
+  }
+  
+  id_q <- enquo(idvar)
+  regex <- paste0(".+?\\.", article, "$")
+  id <- treaty_df %>% 
+    filter(str_detect(!!id_q, regex) == TRUE) %>% 
+    pull(!!id_q)
+  
 }
+
 
 # add_orig: --------------------------------------------------------------------
 add_orig <- function(orig_df, treaty_df, master_df){
+
   treaty_df <- treaty_df %>% 
     ungroup() %>% 
     select(article, text, ends_with("id"))
@@ -174,4 +199,34 @@ dl_ws <- function(sheet_name){
 
 
 
+# lookup_id_clip: same as lookup_id but with clipping functionality ------------------------------
+# lookup id --------------------------------------------------------------------
+# treaty_df: a data frame that contains the parsed treaty
+# idvar: name of id variable, e.g. merger_id, specified not as a string
+lookup_id_clip <- function(treaty_df, idvar, article){
+  if (!require(clipr)){
+    stop("this version only works with clipr installed. Please use lookup_id instead.")
+  }
 
+  if(!clipr_available()){
+    stop("your clipboard is not available. Check system dependencies in the CRAN documentation.")
+  }
+  
+  treaty_q <- enquo(treaty_df)
+  treaty_qn <- quo_name(treaty_q)
+  
+  if(!exists(treaty_qn)){
+    # read in csv
+    treaty_df <- read_csv(paste0("data/", treaty_qn, ".csv"))
+    treaty_df <- treaty_df %>% 
+      mutate_all(.funs = funs(as.character))
+  }
+  
+  id_q <- enquo(idvar)
+  regex <- paste0(".+?\\.", article, "$")
+  id <- treaty_df %>% 
+    filter(str_detect(!!id_q, regex) == TRUE) %>% 
+    pull(!!id_q)
+  write_clip(id)
+  return(id)
+}

@@ -83,15 +83,57 @@ sea = sea %>%
 
 sea = sea[order(sea$article),]
 
-write.csv(sea, file = "data/sea.csv")
 
 # create id variable -------------------------------------------------------- #
 
 sea = sea %>% 
-  unite(sea_id, title:article, sep = ".")
+  unite(sea_id, title:article, sep = ".", remove = FALSE)
 
 sea$sea_id = str_replace_all(sea$sea_id, "NA", "X")
 sea$treaty = "sea"
 
+write_csv(sea, "data/sea.csv")
+
 sea = sea %>% 
   select(treaty, sea_id, text)
+
+# changes -------------------------------------------------------------------#
+
+# read data
+
+# read back in sea
+sea <- read_csv("data/sea.csv")
+sea <- sea %>% 
+  mutate_all(funs(as.character))
+
+# download google sheet data
+dl_ws("sea")
+
+# changes
+sea_changes <- read_csv("data/sea_changes.csv", col_types = "ccccccc")
+sea_orig <- read_csv("data/sea_orig.csv", col_types = "cc")
+
+# no global changes in sea 
+
+t57 <- read_rds("data/1957_2.rds")
+
+# prepare changes data frame 
+sea_changes <- sea_changes %>% 
+  mutate(new_txt = if_else(is.na(new_txt) & !is.na(old_txt), "", new_txt)) %>% 
+  fill(treaty) %>% 
+  fill(sea_change_id)
+
+# join sea_changes
+t65 <- full_join(t57, sea_changes, by = c("treaty", "current_id"))
+
+# apply changes
+t65 <- apply_changes(t65, sea_id)
+
+# add original articles
+t65 <- add_orig(sea_orig, sea, t65)
+
+# apply and save ------------------------------------------------------------ #
+write_rds(t65, "data/1965.rds")
+
+
+

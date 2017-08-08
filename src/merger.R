@@ -123,7 +123,7 @@ t65 <- apply_changes(t65, merger_id)
 t65 <- add_orig(merger_orig, merger, t65)
 
 # apply and save ------------------------------------------------------------ #
-saveRDS(t65, "data/1965.rds")
+write_rds(t65, "data/1965.rds")
 
 
 

@@ -100,6 +100,10 @@ eec = eec %>%
 eec$eec_id = str_replace_all(eec$eec_id, "NA", "X")
 eec$treaty = "eec"
 
+eec <- eec %>% 
+  select(treaty, eec_id, everything()) 
+rownames(eec) <- NULL
+
 write_csv(eec, "data/eec.csv")
 
 # add to previous ----------------------------------------------------------- #
