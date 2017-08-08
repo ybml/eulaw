@@ -1,0 +1,252 @@
+sea_change_id,treaty,current_id,action,old_txt,new_txt,sea_id
+4,ecsc,None,add,,"Article 32d
+
+1. At the request of the Court of Justice and after consulting the Commission and the European Parliament, the Council may, acting unanimously, attach to the Court of Justice a court with jurisdiction to hear and determine at first instance, subject to a right of appeal to the Court of Justice on points of law only and in accordance with the conditions laid down by the Statute, certain classes of action or proceeding brought by natural or legal persons. That court shall not be competent to hear and determine actions brought by Member States or by Community Institutions or questions referred for a preliminary ruling under Article 41.
+
+2. The Council, following the procedure laid down in paragraph 1, shall determine the composition of that court and adopt the necessary adjustments and additional provisions to the Statute of the Court of Justice. Unless the Council decides otherwise, the provisions of this Treaty relating to the Court of Justice, in particular the provisions of the Protocol on the Statute of the Court of Justice, shall apply to that court.
+
+3. The members of that court shall be chosen from persons whose independence is beyond doubt and who possess the ability required for appointment to judicial office; they shall be appointed by common accord of the Governments of the Member States for a term of six years. The membership shall be partially renewed every three years. Retiring members shall be eligible for reappointment.
+
+4. That court shall establish its rules of procedure in agreement with the Court of Justice. Those rules shall require the unanimous approval of the Council.",2.4.32d
+5,ecsc,2.4.45,amend,,"The Council may, acting unanimously at the request of the Court of Justice and after consulting the Commission and the European Parliament, amend the provisions of Title III of the Statute.",
+6,eec,1.X.X.X.7,repl_txt,after the Assembly has been consulted,in co-operation with the European Parliament,
+6,,2.3.1.X.49,repl_txt,"the Council shall, acting on a proposal from the Commission and after the Economic and Social Committee has been consulted","the Council shall, acting by a qualified majority on a proposal from the Commission, in co-operation with the European Parliament and after consulting the Economic and Social Committee",
+6,,2.3.2.X.54,repl_txt,"the Council shall, on a proposal from the Commission and after the Economic and Social Committee and the Assembly have been consulted","the Council shall, acting on a proposal from the Commission, in co-operation with the European Parliament and after consulting the Economic and Social Committee",
+6,,2.3.2.X.56,repl_txt,"After the end of the second stage, however, the Council, acting by means of a qualified majority vote on a proposal of the Commission, shall issue directives for co-ordinating such provisions as, in each Member State, fall within the administrative field.","After the end of the second stage, however, the Council shall, acting by a qualified majority on a proposal from the Commission and in co-operation with the European Parliament, issue directives for the co-ordination of such provisions as, in each Member State, are a matter for regulation or administrative action.",
+6,,2.3.2.X.57,repl_txt,"and after the Assembly has been consulted, shall, in the course","and in co-operation with the European Parliament, shall, in the course",
+6,,2.3.2.X.57,repl_txt,"In all other cases, the Council shall act in the course of the first stage by means of a unanimous vote and subsequently by means of a qualified majority vote.","In other cases the Council shall act by a qualified majority, in co-operation with the European Parliament.",
+7,eec,5.1.1.2.149,repl_ent,,"Article 149
+
+1. Where, in pursuance of this Treaty, the Council acts on a proposal from the Commission, unanimity shall be required for an act constituting an amendment to that proposal.
+
+2. Where, in pursuance of this Treaty, the Council acts in co-operation with the European Parliament, the following procedure shall apply:
+
+(a) The Council, acting by a qualified majority under the conditions of paragraph 1, on a proposal from the Commission and after obtaining the Opinion of the European Parliament, shall adopt a common position.
+
+(b) The Council's common position shall be communicated to the European Parliament. The Council and the Commission shall inform the European Parliament fully of the reasons which led the Council to adopt its common position and also of the Commission's position.
+
+If, within three months of such communication, the European Parliament approves this common position or has not taken a decision within that period, the Council shall definitively adopt the act in question in accordance with the common position.
+
+(c) The European Parliament may within the period of three months referred to in point (b), by an absolute majority of its component members, propose amendments to the Council's common position. The European Parliament may also, by the same majority, reject the Council's common position. The result of the proceedings shall be transmitted to the Council and the Commission.
+
+If the European Parliament has rejected the Council's common position, unanimity shall be required for the Council to act on a second reading.
+
+(d) The Commission shall, within a period of one month, re-examine the proposal on the basis of which the Council adopted its common position, by taking into account the amendments proposed by the European Parliament.
+
+The Commission shall forward to the Council, at the same time as its re-examined proposal, the amendments of the European Parliament which it has not accepted, and shall express its opinion on them. The Council may adopt these amendments unanimously.
+
+(e) The Council, acting by a qualified majority, shall adopt the proposal as re-examined by the Commission.
+
+Unanimity shall be required for the Council to amend the proposal as re-examined by the Commission.
+
+(f) In the cases referred to in points (c), (d) and (e), the Council shall be required to act within a period of three months. If no decision is taken within this period, the Commission proposal shall be deemed not to have been adopted.
+
+(g) The periods referred to in points (b) and (f) may be extended by a maximum of one month by common accord between the Council and the European Parliament.
+
+As long as the Council has not acted, the Commission may alter its proposal at any time during the procedures mentioned in paragraphs 1 and 2.",
+8,eec,6.X.X.X.237,repl_txt,"Any European State may apply to become a member of the Community. It shall address its application to the Council which, after obtaining the opinion of the Commission, shall act by means of a unanimous vote.","Any European State may apply to become a member of the Community. It shall address its application to the Council, which shall act unanimously after consulting the Commission and after receiving the assent of the European Parliament which shall act by an absolute majority of its component members.",
+9,eec,6.X.X.X.238,repl_txt,Such agreements shall be concluded by the Council acting by means of a unanimous vote and after consulting the Assembly.,"These agreements shall be concluded by the Council, acting unanimously and after receiving the assent of the European Parliament which shall act by an absolute majority of its component members.",
+10,eec,5.1.1.2.145,amend,,"— confer on the Commission, in the acts which the Council adopts, powers for the implementation of the rules which the Council lays down. The Council may impose certain requirements in respect of the exercise of these powers. The Council may also reserve the right, in specific cases, to exercise directly implementing powers itself. The procedures referred to above must be consonant with principles and rules to be laid down in advance by the Council, acting unanimously on a proposal from the Commission and after obtaining the Opinion of the European Parliament.",
+11,eec,None,add,,"Article 168a
+
+1. At the request of the Court of Justice and after consulting the Commission and the European Parliament, the Council may, acting unanimously, attach to the Court of Justice a court with jurisdiction to hear and determine at first instance, subject to a right of appeal to the Court of Justice on points of law only and in accordance with the conditions laid down by the Statute, certain classes of action or proceeding brought by natural or legal persons. That court shall not be competent to hear and determine actions brought by Member States or by Community Institutions or questions referred for a preliminary ruling under Article 177.
+
+2. The Council, following the procedure laid down in paragraph 1, shall determine the composition of that court and adopt the necessary adjustments and additional provisions to the Statute of the Court of Justice. Unless the Council decides otherwise, the provisions of this Treaty relating to the Court of Justice, in particular the provisions of the Protocol on the Statute of the Court of Justice, shall apply to that court.
+
+3. The members of that court shall be chosen from persons whose independence is beyond doubt and who possess the ability required for appointment to judicial office; they shall be appointed by common accord of the Governments of the Member States for a term of six years. The membership shall be partially renewed every three years. Retiring members shall be eligible for reappointment.
+
+4. That court shall establish its rules of procedure in agreement with the Court of Justice. Those rules shall require the unanimous approval of the Council.",5.1.1.4.168a
+12,eec,5.1.1.4.188,repl_txt,The Statute of the Court of Justice shall be laid down in a separate Protocol.,"The Statute of the Court of Justice shall be laid down in a separate Protocol. \n The Council may, acting unanimously at the request of the Court of 
+Justice and after consulting the Commission and the European Parliament,
+ amend the provisions of Title III of the Statute.",
+13,eec,None,add,,"Article 8a
+
+The Community shall adopt measures with the aim of progressively establishing the internal market over a period expiring on 31 December 1992, in accordance with the provisions of this Article and of Articles 8b, 8c, 28, 57(2), 59, 70(1), 84, 99, 100a and 100b and without prejudice to the other provisions of this Treaty.
+
+The internal market shall comprise an area without internal frontiers in which the free movement of goods, persons, services and capital is ensured in accordance with the provisions of this Treaty.",1.X.X.X.8a
+14,,None,add,,"Article 8b
+
+The Commission shall report to the Council before 31 December 1988 and again before 31 December 1990 on the progress made towards achieving the internal market within the time limit fixed in Article 8a.
+
+The Council, acting by a qualified majority on a proposal from the Commission, shall determine the guidelines and conditions necessary to ensure balanced progress in all the sectors concerned.",1.X.X.X.8b
+15,,None,add,,"Article 8c
+
+When drawing up its proposals with a view to achieving the objectives set out in Article 8a, the Commission shall take into account the extent of the effort that certain economies showing differences in development will have to sustain during the period of establishment of the internal market and it may propose appropriate provisions.
+
+If these provisions take the form of derogations, they must be of a temporary nature and must cause the least possible disturbance to the functioning of the common market.",1.X.X.X.8c
+16,,2.1.1.2.28,repl_ent,,"Article 28
+
+Any autonomous alteration or suspension of duties in the common customs tariff shall be decided by the Council acting by a qualified majority on a proposal from the Commission.",
+16,,2.3.2.X.57,repl_txt,"A unanimous vote shall be required on matters which, in at least one Member State, are subject to legislative provisions, and on measures concerning the protection of savings, in particular the allotment of credit and the banking profession, and concerning the conditions governing the exercise in the various Member States of the medical, para-medical and pharmaceutical professions.",Unanimity shall be required for directives the implementation of which involves in at least one Member State amendment of the existing principles laid down by law governing the professions with respect to training and conditions of access for natural persons.,
+16,,2.3.3.X.59,repl_txt,by means of a unanimous vote,by a qualified majority,
+16,,2.3.4.X.70,repl_txt,"The Council, acting by means of a unanimous vote, shall issue directives in this connection. It shall endeavour to achieve the highest possible degree of liberalisation.","For this purpose the Council shall issue directives, acting by a qualified majority. It shall endeavour to attain the highest possible degree of liberalization. Unanimity shall be required for measures which constitute a step back as regards the liberalization of capital movements.",
+16,,2.4.X.X.84,repl_txt,"The Council, acting by means of a unanimous vote, may decide whether, to what extent. and by what procedure appropriate provisions might be adopted for sea and air transport.","The Council, acting by a qualified majority, may decide whether, to what extent. and by what procedure appropriate provisions might be adopted for sea and air transport. The procedural provisions of Article 75(1) and (3) shall apply.",
+17,,3.1.2.X.99,repl_ent,,"Article 99
+
+The Council shall, acting unanimously on a proposal from the Commission and after consulting the European Parliament, adopt provisions for the harmonization of legislation concerning turnover taxes, excise duties and other forms of indirect taxation to the extent that such harmonization is necessary to ensure the establishment and the functioning of the internal market within the time limit laid down in Article 8a.",
+18,,None,add,,"Article 100a
+
+1. By way of derogation from Article 100 and save where otherwise provided in this Treaty, the following provisions shall apply for the achievement of the objectives set out in Article 8a. The Council shall, acting by a qualified majority on a proposal from the Commission in co-operation with the European Parliament and after consulting the Economic and Social Committee, adopt the measures for the approximation of the provisions laid down by law, regulation or administrative action in Member States which have as their object the establishment and functioning of the internal market.
+
+2. Paragraph 1 shall not apply to fiscal provisions, to those relating to the free movement of persons nor to those relating to the rights and interests of employed persons.
+
+3. The Commission, in its proposals envisaged in paragraph 1 concerning health, safety, environmental protection and consumer protection, will take as a base a high level of protection.
+
+4. If, after the adoption of a harmonization measure by the Council acting by a qualified majority, a Member State deems it necessary to apply national provisions on grounds of major needs referred to in Article 36, or relating to protection of the environment or the working environment, it shall notify the Commission of these provisions.
+
+The Commission shall confirm the provisions involved after having verified that they are not a means of arbitrary discrimination or a disguised restriction on trade between Member States.
+
+By way of derogation from the procedure laid down in Articles 169 and 170, the Commission or any Member State may bring the matter directly before the Court of Justice if it considers that another Member State is making improper use of the powers provided for in this Article.
+
+5. The harmonization measures referred to above shall, in appropriate cases, include a safeguard clause authorizing the Member States to take, for one or more of the non-economic reasons referred to in Article 36, provisional measures subject to a Community control procedure.",3.1.3.X.100a
+19,,None,add,,"Article 100b
+
+1. During 1992, the Commission shall, together with each Member State, draw up an inventory of national laws, regulations and administrative provisions which fall under Article 100a and which have not been harmonized pursuant to that Article.
+
+The Council, acting in accordance with the provisions of Article 100a, may decide that the provisions in force in a Member State must be recognized as being equivalent to those applied by another Member State.
+
+2. The provisions of Article 100a(4) shall apply by analogy.
+
+3. The Commission shall draw up the inventory referred to in the first subparagraph of paragraph 1 and shall submit appropriate proposals in good time to allow the Council to act before the end of 1992.",3.1.3.X.100b
+20,,None,add,,"Article 102a
+
+1. In order to ensure the convergence of economic and monetary policies which is necessary for the further development of the Community, Member States shall co-operate in accordance with the objectives of Article 104. In so doing, they shall take account of the experience acquired in co-operation within the framework of the European Monetary System (EMS) and in developing the ECU, and shall respect existing powers in this field.
+
+2. In so far as further development in the field of economic and monetary policy necessitates institutional changes, the provisions of Article 236 shall be applicable. The Monetary Committee and the Committee of Governors of the Central Banks shall also be consulted regarding institutional changes in the monetary area.",3.2.1.X.102a
+21,,None,add,,"Article 118a
+
+1. Member States shall pay particular attention to encouraging improvements, especially in the working environment, as regards the health and safety of workers, and shall set as their objective the harmonization of condition in this area, while maintaining the improvements made.
+
+2. In order to help achieve the objective laid down in the first paragraph, the Council, acting by a qualified majority on a proposal from the Commission, in co-operation with the European Parliament and after consulting the Economic and Social Committee, shall adopt, by means of directives, minimum requirements for gradual implementation, having regard to the conditions and technical rules obtaining in each of the Member States.
+
+Such directives shall avoid imposing administrative, financial and legal constraints in a way which would hold back the creation and development of small and medium-sized undertakings.
+
+3. The provisions adopted pursuant to this Article shall not prevent any Member State from maintaining or introducing more stringent measures for the protection of working conditions compatible with this Treaty.",3.3.1.X.118a
+22,,None,add,,"Article 118b
+
+The Commission shall endeavour to develop the dialogue between management and labour at European level which could, if the two sides consider it desirable, lead to relations based on agreement.",3.3.1.X.118b
+23,,None,add,,"Article 130a
+
+In order to promote its overall harmonious development, the Community shall develop and pursue its actions leading to the strengthening of its economic and social cohesion.
+
+In particular the Community shall aim at reducing disparities between the various regions and the backwardness of the least-favoured regions.",3.5.X.X.130a
+23,,None,add,,"Article 130b
+
+Member States shall conduct their economic policies, and shall coordinate them, in such a way as, in addition, to attain the objectives set out in Article 130a. The implementation of the common policies and of the internal market shall take into account the objectives set out in Article 130a and in Article 130c and shall contribute to their achievement. The Community shall support the achievement of these objectives by the action it takes through the structural Funds (European Agricultural Guidance and Guarantee Fund, Guidance Section, European Social Fund, European Regional Development Fund), the European Investment Bank and the other existing financial instruments.
+
+",3.5.X.X.130b
+23,,None,add,,"Article 130c
+
+The European Regional Development Fund is intended to help redress the principal regional imbalances in the Community through participating in the development and structural adjustment of regions whose development is lagging behind and in the conversion of declining industrial regions.",3.5.X.X.130c
+23,,None,add,,"Article 130d
+
+Once the Single European Act enters into force the Commission shall submit a comprehensive proposal to the Council, the purpose of which will be to make such amendments to the structure and operational rules of the existing structural Funds (European Agricultural Guidance and Guarantee Fund, Guidance Section, European Social Fund, European Regional Development Fund) as are necessary to clarify and rationalize their tasks in order to contribute to the achievement of the objectives set out in Article 130a and Article 130c, to increase their efficiency and to coordinate their activities between themselves and with the operations of the existing financial instruments. The Council shall act unanimously on this proposal within a period of one year, after consulting the European Parliament and the Economic and Social Committee.",3.5.X.X.130d
+23,,None,add,,"Article 130e
+
+After adoption of the decision referred to in Article 130d, implementing decisions relating to the European Regional Development Fund shall be taken by the Council, acting by a qualified majority on a proposal from the Commission and in co-operation with the European Parliament.
+
+With regard to the European Agricultural Guidance and Guarantee Fund, Guidance Section and the European Social Fund, Articles 43, 126 and 127 remain applicable respectively.",3.5.X.X.130e
+24,,None,add,,"Article 130f
+
+1. The Community's aim shall be to strengthen the scientific and technological basis of European industry and to encourage it to become more competitive at international level.
+
+2. In order to achieve this, it shall encourage undertakings including small and medium-sized undertakings, research centres and universities in their research and technological development activities; it shall support their efforts to co-operate with one another, aiming, notably, at enabling undertakings to exploit the Community's internal market potential to the full, in particular through the opening up of national public contracts, the definition of common standards and the removal of legal and fiscal barriers to that co-operation.
+
+3. In the achievement of these aims, special account shall be taken of the connection between the common research and technological development effort, the establishment of the internal market and the implementation of common policies, particularly as regards competition and trade.",3.6.X.X.130f
+24,,None,add,,"Article 130g
+
+In pursuing these objectives the Community shall carry out the following activities, complementing the activities carried out in the Member States:
+
+(a) implementation of research, technological development and demonstration programmes, by promoting co-operation with undertakings, research centres and universities;
+
+(b) promotion of co-operation in the field of Community research, technological development, and demonstration with third countries and international organizations;
+
+(c) dissemination and optimization of the results of activities in Community research, technological development, and demonstration;
+
+(d) stimulation of the training and mobility of researchers in the Community.",3.6.X.X.130g
+24,,None,add,,"Article 130h
+
+Member States shall, in liaison with the Commission, co-ordinate among themselves the policies and programmes carried out at national level. In close contact with the Member States, the Commission may take any useful initiative to promote such co-ordination.",3.6.X.X.130h
+24,,None,add,,"Article 130i
+
+1. The Community shall adopt a multiannual framework programme setting out all its activities. The framework programme shall lay down the scientific and technical objectives, define their respective priorities, set out the main lines of the activities envisaged and fix the amount deemed necessary, the detailed rules for financial participation by the Community in the programme as a whole and the breakdown of this amount between the various activities envisaged.
+
+2. The framework programme may be adapted or supplemented, as the situation changes.",3.6.X.X.130i
+24,,None,add,,"Article 130k
+
+The framework programme shall be implemented through specific programmes developed within each activity. Each specific programme shall define the detailed rules for implementing it, fix its duration and provide for the means deemed necessary.
+
+The Council shall define the detailed arrangements for the dissemination of knowledge resulting from the specific programmes.",3.6.X.X.130k
+24,,None,add,,"Article 130l
+
+In implementing the multiannual framework programme, supplementary programmes may be decided on involving the participation of certain Member States only, which shall finance them subject to possible Community participation.
+
+The Council shall adopt the rules applicable to supplementary programmes, particularly as regards the dissemination of knowledge and the access of other Member States.",3.6.X.X.130l
+24,,None,add,,"Article 130m
+
+In implementing the multiannual framework programme, the Community may make provision, with the agreement of the Member States concerned, for participation in research and development programmes undertaken by several Member States, including participation in the structures created for the execution of those programmes.",3.6.X.X.130m
+24,,None,add,,"Article 130n
+
+In implementing the multiannual framework programme, the Community may make provision for co-operation in Community research, technological development and demonstration with third countries or international organizations.
+
+The detailed arrangements for such co-operation may be the subject of international agreements between the Community and the third parties concerned which shall be negotiated and concluded in accordance with Article 228.",3.6.X.X.130n
+24,,None,add,,"Article 130o
+
+The Community may set up joint undertakings or any other structure necessary for the efficient execution of programmes of Community research, technological development and demonstration.",3.6.X.X.130o
+24,,None,add,,"Article 130p
+
+1. The detailed arrangements for financing each programme, including any Community contribution, shall be established at the time of the adoption of the programme.
+
+2. The amount of the Community's annual contribution shall be laid down under the budgetary procedure, without prejudice to other possible methods of Community financing. The estimated cost of the specific programmes must not in aggregate exceed the financial provision in the framework programme.#",3.6.X.X.130p
+24,,None,add,,"Article 130q
+
+1. The Council shall, acting unanimously on a proposal from the Commission and after consulting the European Parliament and the Economic and Social Committee, adopt the provisions referred to in Articles 130i and 130o.
+
+2. The Council shall, acting by a qualified majority on a proposal from the Commission, after consulting the Economic and Social Committee, and in co-operation with the European Parliament, adopt the provisions referred to in Articles 130k, 130l, 130m, 130n and 130p(1). The adoption of these supplementary programmes shall also require the agreement of the Member States concerned.",3.6.X.X.130q
+25,,None,add,,"Article 130r
+
+1. Action by the Community relating to the environment shall have the following objectives:
+
+— to preserve, protect and improve the quality of the environment,
+
+— to contribute towards protecting human health,
+
+— to ensure a prudent and rational utilization of natural resources.
+
+2. Action by the Community relating to the environment shall be based on the principles that preventive action should be taken, that environmental damage should as a priority be rectified at source, and that the polluter should pay. Environmental protection requirements shall be a component of the Community's other policies.
+
+3. In preparing its action relating to the environment, the Community shall take account of:
+
+— available scientific and technical data,
+
+— environmental conditions in the various regions of the Community,
+
+— the potential benefits and costs of action or of lack of action,
+
+— the economic and social development of the Community as a whole and the balanced development of its regions.
+
+4. The Community shall take action relating to the environment to the extent to which the objectives referred to in paragraph 1 can be attained better at Community level than at the level of the individual Member States. Without prejudice to certain measures of a Community nature, the Member States shall finance and implement the other measures.
+
+5. Within their respective spheres of competence, the Community and the Member States shall co-operate with third countries and with the relevant international organizations. The arrangements for Community co-operation may be the subject of agreements between the Community and the third parties concerned, which shall be negotiated and concluded in accordance with Article 228.
+
+The previous paragraph shall be without prejudice to Member States' competence to negotiate in international bodies and to conclude international agreements.
+
+",3.7.X.X.130r
+25,,None,add,,"Article 130s
+
+The Council, acting unanimously on a proposal from the Commission and after consulting the European Parliament and the Economic and Social Committee, shall decide what action is to be taken by the Community.
+
+The Council shall, under the conditions laid down in the preceding subparagraph, define those matters on which decisions are to be taken by a qualified majority.",3.7.X.X.130s
+25,,None,add,,"Article 130t
+
+The protective measures adopted in common pursuant to Article 130s shall not prevent any Member State from maintaining or introducing more stringent protective measures compatible with this Treaty.",3.7.X.X.130t
+26,euratom,None,add,,"Article 140a
+
+1. At the request of the Court of Justice and after consulting the Commission and the European Parliament, the Council may, acting unanimously, attach to the Court of Justice a court with jurisdiction to hear and determine at first instance, subject to a right of appeal to the Court of Justice on points of law only and in accordance with the conditions laid down by the Statute, certain classes of action or proceeding brought by natural or legal persons. That court shall not be competent to hear and determine actions brought by Member States or by Community Institutions or questions referred for a preliminary ruling under Article 150.
+
+2. The Council, following the procedure laid down in paragraph 1, shall determine the composition of that court and adopt the necessary adjustments and additional provisions to the Statute of the Court of Justice. Unless the Council decides otherwise, the provisions of this Treaty relating to the Court of Justice, in particular the provisions of the Protocol on the Statute of the Court of Justice, shall apply to that court.
+
+3. The members of that court shall be chosen from persons whose independence is beyond doubt and who possess the ability required for appointment to judicial office; they shall be appointed by common accord of the Governments of the Member States for a term of six years. The membership shall be partially renewed every three years. Retiring members shall be eligible for reappointment.
+
+4. That court shall establish its rules of procedure in agreement with the Court of Justice. Those rules shall require the unanimous approval of the Council.",3.1.4.140a
+27,,3.1.4.160,repl_txt,The Statute of the Court of Justice shall be laid down in a separate Protocol.,"The Statute of the Court of Justice shall be laid down in a separate Protocol. \n The Council may, acting unanimously at the request of the Court of Justice and after consulting the Commission and the European Parliament, amend the provisions of Title III of the Statute.",

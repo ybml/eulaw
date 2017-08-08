@@ -91,44 +91,56 @@ write_csv(merger, "data/merger.csv")
 
 # changes ------------------------------------------------------------------- #
 
-# read data
+# 1. read data
 
-# read back in merger
+# 1.1. read back in merger
 merger <- read_csv("data/merger.csv", col_types = "ccccc")
 merger$article <- str_replace_all(merger$article, "\\.0", "") # delete .0 from article number
 
 # download google sheet data
-dl_ws("merger")
+# dl_ws("merger") # only run to update changes in googledocs to local files 
 
-# changes data
+# 1.2. changes data
 merger_changes <- read_csv("data/merger_changes.csv", col_types = "ccccccc")
 merger_orig <- read_csv("data/merger_orig.csv", col_types = "cc")
 # no global changes in merger 
 
-# old data 
+# 1.3. old data 
 t57 <- read_rds("data/1957_2.rds")
 
-# prepare changes data frame 
+# 2. Some data cleaning
+# 2.1. prepare changes data frame 
 merger_changes <- merger_changes %>% 
   mutate(new_txt = if_else(is.na(new_txt) & !is.na(old_txt), "", new_txt)) %>% 
   fill(treaty) %>% 
   fill(merger_change_id)
 
+# join the stupid id 
+merger_changes <- left_join(merger_changes %>% select(article = merger_change_id, everything()),
+                            merger %>% select(article, merger_change_id = merger_id),
+                            by = "article")
+merger_changes$article <- NULL
+
+# 2.2. prepare original articles 
+merger_sub <- merger %>% 
+  ungroup() %>% 
+  select(article, text, ends_with("id"))
+
+merger_orig <- left_join(merger_orig, merger_sub, by = "article")
+merger_orig$current_id <- merger_orig$merger_id 
+merger_orig$article <- NULL # delete article variable
+
+
+# 3. Apply Changes
+# 3.1. Changes
 # join merger_changes
 t65 <- full_join(t57, merger_changes, by = c("treaty", "current_id"))
 
 # apply changes
 t65 <- apply_changes(t65, merger_id)
 
+# 3.2. Original articles 
 # add original articles
-
-merger_sub <- merger_sub %>% 
-  ungroup() %>% 
-  select(article, text, ends_with("id"))
-  
-merger_orig <- left_join(merger_orig, merger_sub, by = "article")
-merger_orig$article <- NULL # delete article variable
-
 t65 <- bind_rows(t65, merger_orig)
 
 
