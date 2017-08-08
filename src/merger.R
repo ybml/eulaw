@@ -95,16 +95,17 @@ write_csv(merger, "data/merger.csv")
 
 # read back in merger
 merger <- read_csv("data/merger.csv", col_types = "ccccc")
+merger$article <- str_replace_all(merger$article, "\\.0", "") # delete .0 from article number
 
 # download google sheet data
 dl_ws("merger")
 
-# changes
+# changes data
 merger_changes <- read_csv("data/merger_changes.csv", col_types = "ccccccc")
 merger_orig <- read_csv("data/merger_orig.csv", col_types = "cc")
-
 # no global changes in merger 
 
+# old data 
 t57 <- read_rds("data/1957_2.rds")
 
 # prepare changes data frame 
@@ -120,9 +121,18 @@ t65 <- full_join(t57, merger_changes, by = c("treaty", "current_id"))
 t65 <- apply_changes(t65, merger_id)
 
 # add original articles
-t65 <- add_orig(merger_orig, merger, t65)
 
-# apply and save ------------------------------------------------------------ #
+merger_sub <- merger_sub %>% 
+  ungroup() %>% 
+  select(article, text, ends_with("id"))
+  
+merger_orig <- left_join(merger_orig, merger_sub, by = "article")
+merger_orig$article <- NULL # delete article variable
+
+t65 <- bind_rows(t65, merger_orig)
+
+
+# save ------------------------------------------------------------ #
 write_rds(t65, "data/1965.rds")
 
 
