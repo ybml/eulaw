@@ -142,7 +142,9 @@ apply_changes <- function(df, which_treaty_id){
 # treaty_df: a data frame that contains the parsed treaty
 # idvar: name of id variable, e.g. merger_id, specified not as a string
 lookup_id <- function(treaty_df, idvar, article){
-  
+  if(article == "None"){
+    return("None")
+  }
   treaty_q <- enquo(treaty_df)
   treaty_qn <- quo_name(treaty_q)
   
@@ -158,22 +160,9 @@ lookup_id <- function(treaty_df, idvar, article){
   id <- treaty_df %>% 
     filter(str_detect(!!id_q, regex) == TRUE) %>% 
     pull(!!id_q)
+  return(id)
   
 }
-
-
-# add_orig: --------------------------------------------------------------------
-add_orig <- function(orig_df, treaty_df, master_df){
-
-  treaty_df <- treaty_df %>% 
-    ungroup() %>% 
-    select(article, text, ends_with("id"))
-    
-  orig_df <- left_join(orig_df, treaty_df, by = "article")
-  master_df <- bind_rows(master_df, orig_df)
-  return(master_df %>% select(-article))
-}
-  
 
 # apply_global_changes: --------------------------------------------------------
 # function that applies global changes
