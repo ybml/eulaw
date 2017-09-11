@@ -12,19 +12,19 @@ library(dplyr)
 library(readr)
 
 rm(list  = ls())
-source("code/utils.R")
+source("src/utils.R")
 
 # ECSC ---------------------------------------------------------------------- #
 
-source("code/ecsc.R") # 1
+source("src/ecsc.R") # 1
 
 # EURATOM (Treaty of Rome) -------------------------------------------------- #
 
-source("code/euratom.R") # 2
+source("src/euratom.R") # 2
 
 # EEC (Treaty of Rome) ------------------------------------------------------ #
 
-source("code/eec.R") # 3
+source("src/eec.R") # 3
 
 # Merger Treaty ------------------------------------------------------------- #
 
