@@ -5,7 +5,6 @@
 # pdf to check numbers 
 # https://europa.eu/european-union/sites/europaeu/files/docs/body/treaty_on_european_union_en.pdf
 
-# August 6, 2017
 url = "https://en.wikisource.org/wiki/Treaty_on_European_Union"
 links = c("/Title_I:_Common_Provisions",
           "/Title_II:_Provisions_Amending_the_Treaty_establishing_the_European_Economic_Community_with_a_view_to_establishing_the_European_Community",
@@ -19,7 +18,7 @@ links = c("/Title_I:_Common_Provisions",
 
 # loop over links and scrape articles of every title
 for (i in 1:length(links)) { 
-
+  
   html = read_html(paste0(url, links[i]))
   
   treaty = html %>%
@@ -33,7 +32,7 @@ for (i in 1:length(links)) {
   
   df$text = str_replace_all(df$text, "\\[edit\\]", " ")
   
-# delete rows and get articles title by title 
+  # delete rows and get articles title by title 
   if (links[i] == links[1]) {
     df = df[order(df$index),] # check
     
@@ -46,6 +45,8 @@ for (i in 1:length(links)) {
     df = df[order(df$index),]
     df = df %>% fill(article)
     
+    df$subarticle = NA
+    
     teu = df
   }
   
@@ -55,6 +56,38 @@ for (i in 1:length(links)) {
     
     # article
     df$article = "G"
+    
+    # sub_article (for changes)
+    df$subarticle = str_extract_all(df$text, "\\d{1,2}\\)")
+    df$subarticle[df$subarticle == "character(0)"] = NA
+    
+    # fixes
+    df$subarticle[df$index == 72] = NA
+    df$subarticle[df$index == 87] = "11)"
+    df$subarticle[df$index == 89] = "12)"
+    df$subarticle[df$index == 124] = NA
+    df$subarticle[df$index == 126] = NA
+    df$subarticle[df$index == 127] = NA
+    df$subarticle[df$index == 129] = NA
+    df$subarticle[df$index == 142] = "18)"
+    df$subarticle[df$index == 148] = NA
+    df$subarticle[df$index == 155] = "22)"
+    df$subarticle[df$index >= 175 & df$index < 407] = NA
+    df$subarticle[df$index == 429] = "33)"
+    df$subarticle[df$index > 478 & df$index < 641] = NA
+    df$subarticle[df$index == 710] = NA
+    df$subarticle[df$index == 775] = NA
+    df$subarticle[df$index == 823] = NA
+    df$subarticle[df$index == 839] = NA
+    df$subarticle[df$index == 953] = NA
+    df$subarticle[df$index == 968] = NA
+    
+    # make numbers
+    df$subarticle = as.numeric( gsub(")", "", df$subarticle))
+    
+    # fill
+    df = df[order(df$index),]
+    df = df %>% fill(subarticle)
     
     teu = bind_rows(teu, df)
   }
@@ -66,6 +99,20 @@ for (i in 1:length(links)) {
     # article
     df$article = "H"
     
+    # sub_article (for changes)
+    df$subarticle = str_extract_all(df$text, "\\d{1,2}\\)")
+    df$subarticle[df$subarticle == "character(0)"] = NA
+    
+    # fixes
+    df$subarticle[df$index == 34] = NA
+    
+    # make numbers
+    df$subarticle = as.numeric( gsub(")", "", df$subarticle))
+    
+    # fill
+    df = df[order(df$index),]
+    df = df %>% fill(subarticle)
+    
     teu = bind_rows(teu, df)
   }
   
@@ -75,6 +122,20 @@ for (i in 1:length(links)) {
     
     # article
     df$article = "I"
+    
+    # sub_article (for changes)
+    df$subarticle = str_extract_all(df$text, "\\d{1,2}\\)")
+    df$subarticle[df$subarticle == "character(0)"] = NA
+    
+    # fixes
+    df$subarticle[df$index == 74] = NA
+    
+    # make numbers
+    df$subarticle = as.numeric( gsub(")", "", df$subarticle))
+    
+    # fill
+    df = df[order(df$index),]
+    df = df %>% fill(subarticle)
     
     teu = bind_rows(teu, df)
   }
@@ -90,6 +151,8 @@ for (i in 1:length(links)) {
     df = df[order(df$index),]
     df = df %>% fill(article)
     
+    df$subarticle = NA
+    
     teu = bind_rows(teu, df)
   }
   
@@ -104,6 +167,8 @@ for (i in 1:length(links)) {
     df = df[order(df$index),]
     df = df %>% fill(article)
     
+    df$subarticle = NA
+    
     teu = bind_rows(teu, df)
   }
   
@@ -117,6 +182,8 @@ for (i in 1:length(links)) {
     df = df[order(df$index),]
     df = df %>% fill(article)
     
+    df$subarticle = NA
+    
     teu = bind_rows(teu, df)
   }
 }
@@ -125,22 +192,25 @@ rm(df, links, url, i, html)
 # concatenate text ---------------------------------------------------------- #
 
 teu = teu %>%
-  group_by(title, article) %>%
-  summarize(text = paste(text, collapse = " "))
-
-teu = teu[order(teu$article),]
-
-write.csv(teu, file = "data/teu.csv")
+  group_by(title, article, subarticle) %>%
+  summarize(txt = paste(text, collapse = " "))
 
 # create id variable -------------------------------------------------------- #
 
-teu$article <- str_replace_all(teu$article, "\\.", "")
+teu$treaty = 6
+
+teu$article = str_replace_all(teu$article, "\\.", "")
 
 teu = teu %>% 
-  unite(teu_id, title:article, sep = ".")
+  unite(id, c("treaty", "title", "article", "subarticle"), sep = ".", remove = FALSE)
 
-teu$teu_id = str_replace_all(teu$teu_id, "NA", "X")
-teu$treaty = "teu"
+teu$id = str_replace_all(teu$id, "NA", "X")
+### cut if X is at the end 
 
-teu = teu %>% 
-  select(treaty, teu_id, text)
+# changes -------------------------------------------------------------------#
+
+# write.csv(teu, file = "tables/teu.csv")
+
+# load change file
+teu = read_csv("tables/teu_changes.csv")
+

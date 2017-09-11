@@ -12,32 +12,42 @@ library(dplyr)
 library(readr)
 
 rm(list  = ls())
-source("src/utils.R")
+source("code/utils.R")
 
 # ECSC ---------------------------------------------------------------------- #
 
-# source("src/ecsc.R")
+source("code/ecsc.R") # 1
 
 # EURATOM (Treaty of Rome) -------------------------------------------------- #
 
-# source("src/euratom.R")
+source("code/euratom.R") # 2
 
 # EEC (Treaty of Rome) ------------------------------------------------------ #
 
-# source("src/eec.R")
+source("code/eec.R") # 3
 
 # Merger Treaty ------------------------------------------------------------- #
 
-source("src/merger.R")
+source("src/merger.R") # 4
 
 # SEA ----------------------------------------------------------------------- #
 
-# source("src/sea.R")
+source("src/sea.R") # 5
 
 # TEU (Maastricht) ---------------------------------------------------------- #
 
+source("src/teu.R") # 6
+
 # Amsterdam Treaty ---------------------------------------------------------- #
+
+source("src/ams.R") # 7
 
 # Treaty of Nice ------------------------------------------------------------ #
 
+source("src/nice.R") # 8
+
 # Treaty of Lisbon ---------------------------------------------------------- #
+
+# source("src/lisbon.R") # 9
+
+# --------------------------------------------------------------------------- #

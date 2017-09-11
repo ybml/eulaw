@@ -2,19 +2,6 @@
 # Merger Treaty
 # --------------------------------------------------------------------------- #
 
-source("src/utils.R")
-
-# load packages
-require(rvest)
-require(purrr)
-require(purrrlyr)
-require(stringr)
-require(tidyr)
-require(dplyr)
-require(readr)
-
-
-# August 2, 2017
 merger = read_html("https://en.wikisource.org/wiki/Merger_Treaty")
 
 treaty = merger %>%
@@ -56,6 +43,7 @@ merger = merger[order(merger$index),]
 
 # fill chapter numbers
 merger = merger %>% fill(chapter)
+
 # fill articles
 merger = merger %>% fill(article)
 
@@ -70,26 +58,73 @@ merger = subset(merger, merger$index >= 26 & merger$index <= 202)
 
 merger = merger %>%
   group_by(chapter, article) %>%
-  summarize(text = paste(text, collapse = " "))
+  summarize(txt = paste(text, collapse = " "))
 
 merger = merger[order(merger$article),]
 
-
 # create id variable -------------------------------------------------------- #
 
+merger$treaty = 4
+
 merger = merger %>% 
-  unite(merger_id, chapter:article, sep = ".", remove = FALSE)
+  unite(id, c("treaty", "chapter", "article"), sep = ".", remove = FALSE)
 
-merger$merger_id = str_replace_all(merger$merger_id, "NA", "X")
-merger$treaty = "merger"
+merger$id = str_replace_all(merger$id, "NA", "X")
 
-write_csv(merger, "data/merger.csv")
+# make a change file manually ----------------------------------------------- #
 
-# merger = merger %>% 
-#   ungroup() %>% 
-#   select(treaty, merger_id, text)
+# save
+write_csv(merger, "tables/merger.csv")
 
-# changes ------------------------------------------------------------------- #
+# go through every article and collect changes: 
+# "add", 
+# "repeal", "repeal_txt", 
+# "replace", "replace_txt", 
+# "insert"
+# mark changes to a (for now) irrelevant document with "remnant"
+
+# load change file
+merger = read_csv("tables/merger_changes.csv")
+
+# add new articles ---------------------------------------------------------- #
+
+# read 
+eulaw = readRDS("data/eulaw_1957.rds")
+
+# add
+
+# rbind
+eulaw = bind_rows(eulaw, eec)
+
+# apply changes ------------------------------------------------------------- #
+
+
+
+
+
+
+
+
+# add id
+eulaw = eulaw %>% 
+  mutate(id = if_else(is.na(id), id_1957, id))
+
+# keep only one id_1957
+eulaw = subset(eulaw, select = c("id_1951", "id", "txt"))
+
+names(eulaw)[names(eulaw)=="id"] = "id_1957"
+
+# save ---------------------------------------------------------------------- #
+
+saveRDS(eulaw, "data/eulaw_1965.rds")
+
+
+
+
+
+
+
+# FRIE ------------------------------------------------------------------- #
 
 # 1. read data
 

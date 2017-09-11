@@ -2,16 +2,6 @@
 # Treaty establishing the European Atomic Energy Community (EURATOM)
 # --------------------------------------------------------------------------- #
 
-# load packages
-require(rvest)
-require(purrr)
-require(purrrlyr)
-require(stringr)
-require(tidyr)
-require(dplyr)
-require(readr)
-
-# August 2, 2017
 euratom = read_html("https://en.wikisource.org/wiki/Treaty_establishing_the_European_Atomic_Energy_Community")
 
 treaty = euratom %>%
@@ -31,12 +21,21 @@ euratom_toc = get_toc("https://en.wikisource.org/wiki/Treaty_establishing_the_Eu
 euratom_toc = euratom_toc %>% 
   separate(tocnumber, into = c("title", "chapter", "section"), sep = "\\.", remove = FALSE)
 
+# fix section numbers (section 1, 2 and 3 in title 6 are not subordinate to a chapter)
+euratom_toc$section[euratom_toc$title == 6 & euratom_toc$chapter == 1] = 1
+euratom_toc$section[euratom_toc$title == 6 & euratom_toc$chapter == 2] = 2
+euratom_toc$section[euratom_toc$title == 6 & euratom_toc$chapter == 3] = 3
+
+euratom_toc$chapter[euratom_toc$title == 6 & euratom_toc$section == 1] = NA
+euratom_toc$chapter[euratom_toc$title == 6 & euratom_toc$section == 2] = NA
+euratom_toc$chapter[euratom_toc$title == 6 & euratom_toc$section == 3] = NA
+
 # delete [edit]
 euratom$text = str_replace_all(euratom$text, "\\[edit\\]", " ")
 
 euratom_toc = euratom_toc[,c("toctext", "title", "chapter", "section")]
 
-names(euratom_toc)[names(euratom_toc)=="toctext"] <- "text"
+names(euratom_toc)[names(euratom_toc)=="toctext"] = "text"
 
 # trim whitespace
 euratom_toc$text = trim(euratom_toc$text)
@@ -87,37 +86,43 @@ euratom = subset(euratom, euratom$index >= 58 & euratom$index <= 986)
 
 euratom = euratom %>%
   group_by(title, chapter, section, article) %>%
-  summarize(text = paste(text, collapse = " "))
+  summarize(txt = paste(text, collapse = " "))
 
 euratom = euratom[order(euratom$article),]
 
-
 # create id variable -------------------------------------------------------- #
 
+euratom$treaty = 2
+
 euratom = euratom %>% 
-  unite(euratom_id, title:article, sep = ".", remove = FALSE)
+  unite(id, c("treaty", "title", "chapter", "section", "article"), sep = ".", remove = FALSE)
 
-euratom$euratom_id = str_replace_all(euratom$euratom_id, "NA", "X")
-euratom$treaty = "euratom"
+euratom$id = str_replace_all(euratom$id, "NA", "X")
 
-write_csv(euratom, "data/euratom.csv")
+# save individual ----------------------------------------------------------- #
+
+write_csv(euratom, "tables/euratom.csv")
 
 # add to ecsc -------------------------------------------------------- #
 
-euratom = euratom %>% 
-  ungroup() %>% 
-  select(treaty, euratom_id, text)
-
 # read in ecsc
-ecsc <- readRDS("data/1951.rds")
+eulaw = readRDS("data/eulaw_1951.rds")
 
-ecsc_euratom <- bind_rows(ecsc, euratom)
+# rbind (new articles only, no changes)
+eulaw = bind_rows(eulaw, euratom)
 
-# add ecsc ids to euratom_id
-ecsc_euratom <- ecsc_euratom %>% 
-  mutate(current_id = if_else(is.na(euratom_id), ecsc_id, euratom_id))
+# add id
+eulaw = eulaw %>% 
+  mutate(id = if_else(is.na(id), id_1951, id))
+
+names(eulaw)[names(eulaw)=="id"] = "id_1957"
 
 # save ---------------------------------------------------------------------- #
-saveRDS(ecsc_euratom, "data/1957_1.rds")
 
-rm(euratom, ecsc, ecsc_euratom)
+# keep all ids
+eulaw = subset(eulaw, select = c("id_1951", "id_1957", "txt"))
+
+saveRDS(eulaw, "data/eulaw_1957.rds")
+
+# --------------------------------------------------------------------------- #
+

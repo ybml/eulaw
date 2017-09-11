@@ -2,16 +2,6 @@
 # Treaty establishing a European Economic Community (EEC)
 # --------------------------------------------------------------------------- #
 
-# load packages
-require(rvest)
-require(purrr)
-require(purrrlyr)
-require(stringr)
-require(tidyr)
-require(dplyr)
-require(readr)
-
-# August 2, 2017
 eec = read_html("https://en.wikisource.org/wiki/Treaty_establishing_the_European_Economic_Community")
 
 treaty = eec %>%
@@ -36,7 +26,7 @@ eec$text = str_replace_all(eec$text, "\\[edit\\]", " ")
 
 eec_toc = eec_toc[,c("toctext", "part", "title", "chapter", "section")]
 
-names(eec_toc)[names(eec_toc)=="toctext"] <- "text"
+names(eec_toc)[names(eec_toc)=="toctext"] = "text"
 
 # trim whitespace
 eec_toc$text = trim(eec_toc$text)
@@ -86,40 +76,42 @@ eec = subset(eec, eec$index >= 70 & eec$index <= 1157)
 
 eec = eec %>%
   group_by(part, title, chapter, section, article) %>%
-  summarize(text = paste(text, collapse = " "))
+  summarize(txt = paste(text, collapse = " "))
 
 eec = eec[order(eec$article),]
 
-
-
 # create id variable -------------------------------------------------------- #
 
+eec$treaty = 3
+
 eec = eec %>% 
-  unite(eec_id, part:article, sep = ".", remove = FALSE)
+  unite(id, c("treaty", "part", "title", "chapter", "section", "article"), sep = ".", remove = FALSE)
 
-eec$eec_id = str_replace_all(eec$eec_id, "NA", "X")
-eec$treaty = "eec"
+eec$id = str_replace_all(eec$id, "NA", "X")
 
-eec <- eec %>% 
-  select(treaty, eec_id, everything()) 
-rownames(eec) <- NULL
+# save individual ----------------------------------------------------------- #
 
-write_csv(eec, "data/eec.csv")
+write_csv(eec, "tables/eec.csv")
 
 # add to previous ----------------------------------------------------------- #
 
-eec = eec %>% 
-  ungroup() %>% 
-  select(treaty, eec_id, text)
-
 # read 
-ecsc_euratom <- readRDS("data/1957_1.rds")
+eulaw = readRDS("data/eulaw_1957.rds")
 
-ecsc_euratom_eec <- bind_rows(ecsc_euratom, eec)
-ecsc_euratom_eec <- ecsc_euratom_eec %>% 
-  mutate(current_id = if_else(is.na(current_id), eec_id, current_id))
+# rbind
+eulaw = bind_rows(eulaw, eec)
+
+# add id
+eulaw = eulaw %>% 
+  mutate(id = if_else(is.na(id), id_1957, id))
+
+# keep only one id_1957
+eulaw = subset(eulaw, select = c("id_1951", "id", "txt"))
+
+names(eulaw)[names(eulaw)=="id"] = "id_1957"
 
 # save ---------------------------------------------------------------------- #
-saveRDS(ecsc_euratom_eec, "data/1957_2.rds")
 
-rm(eec, ecsc_euratom, ecsc_euratom_eec)
+saveRDS(eulaw, "data/eulaw_1957.rds")
+
+# --------------------------------------------------------------------------- #

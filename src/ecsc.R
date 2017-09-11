@@ -2,16 +2,6 @@
 # The Treaty establishing the European Coal and Steel Community (ECSC)
 # --------------------------------------------------------------------------- #
 
-# load packages
-require(rvest)
-require(purrr)
-require(purrrlyr)
-require(stringr)
-require(tidyr)
-require(dplyr)
-require(readr)
-
-# August 2, 2017
 ecsc = read_html("https://en.wikisource.org/wiki/The_Treaty_establishing_the_European_Coal_and_Steel_Community_(ECSC)")
 
 treaty = ecsc %>%
@@ -34,9 +24,10 @@ ecsc_toc = ecsc_toc %>%
 # delete [edit]
 ecsc$text = str_replace_all(ecsc$text, "\\[edit\\]", " ")
 
+# select columns
 ecsc_toc = ecsc_toc[,c("toctext", "title", "chapter")]
 
-names(ecsc_toc)[names(ecsc_toc)=="toctext"] <- "text"
+names(ecsc_toc)[names(ecsc_toc)=="toctext"] = "text"
 
 # trim whitespace
 ecsc_toc$text = trim(ecsc_toc$text)
@@ -54,6 +45,7 @@ ecsc = ecsc %>% group_by(title) %>% fill(chapter)
 
 # get articles -------------------------------------------------------------- #
 
+ecsc$article = NA
 ecsc$article = as.numeric(unlist(str_extract_all(str_extract_all(ecsc$text, "^Article \\d{1,}"), "\\d{1,}")))
 ecsc$article[ecsc$article == 0] = NA
 
@@ -76,29 +68,30 @@ ecsc = subset(ecsc, ecsc$index >= 39 & ecsc$index <= 479)
 
 ecsc = ecsc %>%
   group_by(title, chapter, article) %>%
-  summarize(text = paste(text, collapse = " "))
+  summarize(txt = paste(text, collapse = " "))
 
 ecsc = ecsc[order(ecsc$article),]
 
-
 # create id variable -------------------------------------------------------- #
 
-ecsc = ecsc %>% 
-  unite(ecsc_id, title:article, sep = ".", remove = FALSE)
-
-ecsc$ecsc_id = str_replace_all(ecsc$ecsc_id, "NA", "X")
-ecsc$treaty = "ecsc"
-
-ecsc <- ecsc %>% 
-  select(treaty, everything())
-
-write_csv(ecsc, "data/ecsc.csv")
+ecsc$treaty = 1
 
 ecsc = ecsc %>% 
-  ungroup() %>% 
-  select(treaty, ecsc_id, text)
+  unite(id, c("treaty", "title", "chapter", "article"), sep = ".", remove = FALSE)
+
+ecsc$id = str_replace_all(ecsc$id, "NA", "X")
+
+# save individual ----------------------------------------------------------- #
+
+write_csv(ecsc, "tables/ecsc.csv")
 
 # save ---------------------------------------------------------------------- #
-saveRDS(ecsc, "data/1951.rds")
 
-rm(ecsc)
+# first treaty
+ecsc = subset(ecsc, select = c("id", "txt"))
+
+names(ecsc)[names(ecsc)=="id"] = "id_1951"
+
+saveRDS(ecsc, "data/eulaw_1951.rds")
+
+# --------------------------------------------------------------------------- #

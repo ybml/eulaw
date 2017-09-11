@@ -2,9 +2,6 @@
 # Single European Act
 # --------------------------------------------------------------------------- #
 
-# August 6, 2017
-source("src/utils.R")
-
 sea = read_html("https://en.wikisource.org/wiki/Single_European_Act")
 
 treaty = sea %>%
@@ -72,7 +69,7 @@ sea = subset(sea, sea$remove_2 != "CHAPTER")
 sea = subset(sea, sea$remove_3 != "Section")
 sea = subset(sea, sea$remove_4 != "Sub-section")
 
-sea = subset(sea, select = c("text", "index", "title", "chapter", "section", "subsection","article"))
+sea = subset(sea, select = c("text", "index", "title", "chapter", "section", "subsection", "article"))
 
 # concatenate text ---------------------------------------------------------- #
 
@@ -81,25 +78,30 @@ sea = subset(sea, sea$index >= 62 & sea$index <= 343)
 
 sea = sea %>%
   group_by(title, chapter, section, subsection, article) %>%
-  summarize(text = paste(text, collapse = " "))
+  summarize(txt = paste(text, collapse = " "))
 
 sea = sea[order(sea$article),]
 
-
 # create id variable -------------------------------------------------------- #
 
+sea$treaty = 5
+
 sea = sea %>% 
-  unite(sea_id, title:article, sep = ".", remove = FALSE)
+  unite(id, c("treaty", "title", "chapter", "section", "subsection", "article"), sep = ".", remove = FALSE)
 
-sea$sea_id = str_replace_all(sea$sea_id, "NA", "X")
-sea$treaty = "sea"
-
-write_csv(sea, "data/sea.csv")
-
-# sea = sea %>% 
-#   select(treaty, sea_id, text)
+sea$id = str_replace_all(sea$id, "NA", "X")
 
 # changes -------------------------------------------------------------------#
+
+write_csv(sea, "tables/sea.csv")
+
+# load change file
+sea = read_csv("tables/sea_changes.csv")
+
+
+
+
+# FRIE -------------------------------------------------------------------#
 
 # find ids for eec
 # sapply(c(7, 49, 54, 56, 57, 57, 149, 237, 238, 145, "None", 188, rep("None", 3), 28, 57, 59, 70, 84, 99), lookup_id, treaty_df = eec, idvar = eec_id) %>% write_clip()
