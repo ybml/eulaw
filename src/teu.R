@@ -158,7 +158,7 @@ for (i in 1:length(links)) {
   
   if (links[i] == links[6]) {
     df = df[order(df$index),] # check
-    df = subset(df, df$index <= 54)
+    df = subset(df, df$index >= 3 & df$index <= 54)
     
     # get articles
     df$article = trim(gsub("Article", "", str_extract_all(df$text, "^Article [A-Z].\\d{1,}")))
@@ -191,9 +191,13 @@ rm(df, links, url, i, html)
 
 # concatenate text ---------------------------------------------------------- #
 
+teu$text = trim(teu$text)
+
 teu = teu %>%
   group_by(title, article, subarticle) %>%
   summarize(txt = paste(text, collapse = " "))
+
+teu$txt = trim(teu$txt)
 
 # create id variable -------------------------------------------------------- #
 
@@ -205,7 +209,9 @@ teu = teu %>%
   unite(id, c("treaty", "title", "article", "subarticle"), sep = ".", remove = FALSE)
 
 teu$id = str_replace_all(teu$id, "NA", "X")
-### cut if X is at the end 
+
+# cut if X is at the end 
+teu$id = str_replace_all(teu$id, ".X$", "")
 
 # changes -------------------------------------------------------------------#
 
@@ -213,4 +219,3 @@ teu$id = str_replace_all(teu$id, "NA", "X")
 
 # load change file
 teu = read_csv("tables/teu_changes.csv")
-
