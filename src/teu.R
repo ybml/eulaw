@@ -215,7 +215,7 @@ teu$id = str_replace_all(teu$id, ".X$", "")
 
 # changes -------------------------------------------------------------------#
 
-# write.csv(teu, file = "tables/teu.csv")
+write.csv(teu, file = "tables/teu.csv")
 
 # load change file
 teu = read_csv("tables/teu_changes.csv")
