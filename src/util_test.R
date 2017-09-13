@@ -8,53 +8,95 @@ rm(list = ls())
 
 # Functions and data
 source("src/utils.R")
-load("tables/mwe.Rdata")
 
+# Examples of each "action" function -------------------------------------------
 
-eulaw = readRDS("data/eulaw_1957.rds")
+# repeal 
 
-data = eulaw
-changes = merger_changes
+repeal_example <- filter(merger_changes, action == "repeal")
+repeal_out <- repeal(eulaw_1957, repeal_example$change_id)
 
+# repeal_txt
 
+repeal_example <- filter(merger_changes, action == "repeal_txt")
 
-apply_changes = function(data, changes) {
+repeal_out <- repeal_txt(data = eulaw_1957,
+                         change_id = repeal_example$change_id,
+                         change_txt = repeal_example$change_txt)
+
+# replace
+
+replace_example <- merger_changes %>%
+  filter(action == "replace")
+
+# Set new_id if non-existing (pre-processing!)
+replace_example <- set_new_id(replace_example, "replace", change_id)
+
+# Then replace.
+replace_out <- replace(eulaw_1957,
+                       replace_example$new_id,
+                       replace_example$new_txt)
+
   
-  data$id = data$id_1957
-  data$old_id = data$id_1957
- 
-  add_article(changes$id[i], changes$txt[i])
-  
-}
+# replace_txt
 
-# insert changes$id[i], changes$txt[i]
-add_article = function(data, id, txt) {
-  
-  df = data.frame(id, txt)
-  data = bind_rows(data, df)
-  
-  return(data)
-  
-}
+replace_txt_example <- merger_changes %>%
+  filter(action == "replace_txt")
 
-data = add_article(data, changes$id[1], changes$txt[1])
+replace_txt_out <- replace_txt(eulaw_1957,
+                               id = replace_txt_example$change_id,
+                               text = replace_txt_example$change_txt,
+                               replacement_txt = replace_txt_example$new_txt)
 
-# insert changes$change_id[i]
-repeal = function(change_id) {
-  
-  data$id[data$old_id == change_id] = NA
-  data$txt[data$old_id == change_id] = NA
-  
-  return(data)
-}
+# insert
 
-# insert changes$change_id[i], changes$change_txt[i]
-repeal_txt = function(change_id, change_txt) {
-  
-  data$txt[data$old_id == change_id] = gsub(change_txt, "", data$txt[data$old_id == change_id])
+insert_example <- filter(merger_changes, action == "insert")
 
-  return(data)
-}
+insert_out <- insert(eulaw_1957,
+                     id = insert_example$new_id,
+                     txt = insert_example$new_txt)
 
-repeal_txt(changes$change_id[5], changes$change_txt[5])
+# former add functionality
 
+add_example <- set_new_txt(merger_changes, "add") %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id) %>%
+  filter(action == "insert")
+
+# Using insert instead of add.
+add_out <- insert(eulaw_1957,
+                  id = add_example$new_id,
+                  txt = add_example$new_txt)
+
+# insert_txt example
+
+insert_txt_out <- insert_txt(eulaw_1957, "1.1.X.1", "This is the new text.")
+
+# apply_changes ----------------------------------------------------------------
+
+# The data.
+rm(list = ls())
+source("src/utils.R")
+
+eulaw_1957 <- readRDS("data/eulaw_1957.rds")
+merger_changes <- read_csv("tables/merger_changes.csv")
+sea_changes <- read_csv("tables/sea_changes.csv")
+
+# Pre-processing on the changes files.
+merger_changes <- set_new_txt(merger_changes, "add") %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id) %>%
+  set_new_id(., "replace", change_id)
+
+eulaw_1967 <- apply_changes(eulaw_1957, merger_changes, "1967")
+
+sea_changes <- set_new_txt(sea_changes, "add") %>%
+  mutate(action = if_else(action == "replace_text", "replace_txt", action)) %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id) %>%
+  set_new_id(., "replace", change_id)
+
+eulaw_1986 <- apply_changes(eulaw_1967, sea_changes, "1986")
+
+saveRDS(eulaw_1967, file = "eulaw_1967.rds")
+saveRDS(eulaw_1986, file = "eulaw_1986.rds")

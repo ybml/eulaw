@@ -52,6 +52,273 @@ get_toc <- function(html){
 
 trim = function (x) gsub("^\\s+|\\s+$", "", x)
 
+# get_old_id: get the old id from an eulaw_ data-frame --------------------- #
+
+get_old_id <- function(data) {
+
+  # data: an eulaw_ data-frame.
+  
+  old_id <- str_extract_all(colnames(data), "\\d{4}") %>%
+    unlist() %>%
+    as.numeric() %>%
+    max() %>%
+    paste0("id_", .)
+
+  return(old_id)
+  
+}
+
+# set_new_id: set "new_id" to "id_field" if "new_id" is NA. ------------------ #
+set_new_id  <- function(changes, directive, id_field) {
+
+  # changes: a _changes dataframe.
+  # directive: action for which new id has to be added.
+
+  quo_id <- enquo(id_field)
+  
+  changes <- changes %>%
+    mutate(new_id = if_else(action == directive & is.na(new_id),
+                            !!quo_id,
+                            new_id
+                    )
+    )
+
+  return(changes)
+  
+}
+
+# set_new_txt: set the new_txt variable for "directive" if field is NA. ------ #
+set_new_txt <- function(changes, directive) {
+
+  # changes: a _changes dataframe.
+  # directive: an action.
+
+  changes <- changes %>%
+    mutate(new_txt = if_else(
+                       action == directive & is.na(new_txt),
+                       txt,
+                       new_txt
+                     )
+    )
+
+  return(changes)
+
+}
+
+# set_action: set "old_action" to "new_action" in "changes".
+set_action <- function(changes, old_action, new_action) {
+
+  # changes: a _changes dataframe.
+  # old_action: the replaced action name.
+  # new_action: the replacement action name.
+  
+  changes <- changes %>%
+    mutate(action = if_else(
+                      action == old_action,
+                      new_action,
+                      action
+                     )
+    )
+
+  return(changes) 
+
+}
+
+# repeal: set id and text of article specified by change_id in data to NA ---- #
+repeal <- function(data, change_id) {
+
+  # data: an eulaw_ dataframe.
+  # change_id: id of article to repeal.
+
+  old_id <- get_old_id(data)
+
+  data <- data %>%
+    mutate(!!old_id := if_else(get(old_id) == change_id,
+                              NA_character_,
+                              get(old_id)
+                      ),
+           txt = if_else(get(old_id) == change_id, NA_character_, txt)
+    )
+  
+  return(data)
+
+}
+
+# repeal_txt: remove change_txt from article with change_id in data --------- #
+repeal_txt <- function(data, change_id, change_txt) {
+
+  # data: data frame consisting of 3 columns the ids of the two predecessing
+  #       treaties, and txt, the text that goes along with the id.
+  # change_id: the id of the article for which the change occurs.
+  # change_txt: the text to be removed.
+
+  old_id <- get_old_id(data)
+  
+  data <- data %>%
+  mutate(txt = if_else(
+                 change_id == get(old_id),
+                 str_replace(txt, change_txt, replacement = ""),
+                 txt
+               )
+  )
+
+  return(data)
+
+}
+
+# replace: replace the article text of article with id in data by new text --- #
+replace <- function(data, id, text) {
+
+  # data: eulaw_ dataframe.
+  # id: the id of the article where replacement occurs.
+  # text: the replacement text.
+
+  old_id <- get_old_id(data)
+
+  data <- data %>%
+    mutate(txt = if_else(id == get(old_id), text, txt))
+
+  return(data)
+  
+}
+
+# replace_txt: replace "text" in article "id" of "data" with "replacement_txt" -#
+replace_txt <- function(data, id, text, replacement_txt){
+
+  # data: an eulaw_ dataframe.
+  # id: id of article where text is replaced.
+  # text: the text which is replaced.
+  # replacement_txt: the replacement text.
+
+  old_id <- get_old_id(data)
+
+  data <- data %>%
+    mutate(
+      txt = if_else(
+              get(old_id) == id,
+              str_replace(txt, text, replacement_txt),
+              txt
+            )
+    )
+
+  return(data)
+  
+}
+
+# insert: ammend "data" with "id" and "text". -------------------------------- #
+insert <- function(data, id, txt) {
+
+  # data: an eulaw_ dataframe.
+  # id: the id of the ammended text.
+  # text: the new text.
+
+  old_id <- get_old_id(data)
+  
+  df <- data_frame(!!old_id := id, txt)
+  data = bind_rows(data, df)
+  
+  return(data)
+
+}
+
+# insert_txt: ammend article specified by "change_id" in "data" with "new_txt" #
+insert_txt <- function(data, change_id, new_txt) {
+
+  # data: an eulaw_ dataframe.
+  # change_id: id of the article to ammend.
+  # new_text: the ammended text.
+
+ old_id <- get_old_id(data)
+  
+  data <- data %>%
+    mutate(txt = if_else(get(old_id) == change_id,
+                   paste(txt, new_txt, sep = " "),
+                   txt
+                 )
+    )
+
+  return(data)
+  
+}
+
+# renumber: set id for article identified by "change_id" to "new_id" -------- #
+renumber <- function(data, change_id, new_id) {
+
+  # data: an eulaw_ dataframe.
+  # change_id: the id of the article to renumber.
+  # new_id: the new id of an article.
+
+  old_id <- get_old_id(data)
+
+  data <- data %>%
+    mutate(!!old_id := if_else(get(old_id) == change_id, new_id, get(old_id)))
+
+  return(data)
+  
+}
+
+# apply_changes: apply the changes in "changes" to "data" -------------------- #
+apply_changes <- function(data, changes, year) {
+
+  # data: an eulaw_ dataframe.
+  # changes: a _changes dataframe.
+  # year: the year postfix of the new id variable.
+
+  # Step 1: construct the new data frame.
+
+  current_id <- str_extract_all(colnames(data), "\\d{4}") %>%
+    unlist() %>%
+    as.numeric() %>%
+    max() %>%
+    paste0("id_", .)
+    
+  new_id <- paste0("id_", as.character(year))
+
+  df <- data %>%
+    mutate(!!new_id := get(current_id)) %>%
+    select(current_id, new_id, txt)
+
+  # Step 2: apply the changes.
+  for (i in 1:nrow(changes)) {
+
+    change <- changes[i, ] 
+    action <- change$action 
+
+    if (action == "insert") {
+      df <- insert(df, id = change$new_id, txt = change$new_txt)
+    } else if (action == "insert_txt") {
+      df <- insert_txt(df,
+                       change_id = change$change_id,
+                       new_txt = change$new_txt
+            )
+    } else if (action == "renumber") {
+      df <- renumber(df, change_id = change$change_id, new_id = change$new_id)
+    } else if (action == "repeal") {
+      df <- repeal(df, change$change_id)
+    } else if (action == "repeal_txt") {
+      df <- repeal_txt(df,
+                       change_id = change$change_id,
+                       change_txt = change$change_txt
+            )
+    } else if (action == "replace") {
+      df <- replace(df, id = change$new_id, text = change$new_txt)
+    } else if (action == "replace_txt") {
+      df <- replace_txt(df,
+                    id = change$change_id,
+                    text = change$change_txt,
+                    replacement_txt = change$new_txt
+        )
+    } else {
+      print_txt <- paste("Catched action:", action)
+      print(print_txt)
+    }
+    
+  }
+
+  return(df)
+
+}
+
 # lookup id --------------------------------------------------------------------
 # treaty_df: a data frame that contains the parsed treaty
 # idvar: name of id variable, e.g. merger_id, specified not as a string
