@@ -319,31 +319,70 @@ apply_changes <- function(data, changes, year) {
 
 }
 
+# lookup_id --------------------------------------------------------------------
+# insert, eulaw, treaty number, article number 
+lookup_id = function(data, treaty, article) {
+  
+  options(warn=-1)
+  
+  # select id
+  data$id = data$id_1957
+  names(data)[names(data)=="id_1957"] = "old_id"
+  
+  # split id into treaty, .., and article
+  data = data %>% 
+    separate(id, sep = "\\.", 
+             into = c("treaty", 
+                      "X1", "X2", "X3", "X4", "X5", "X6", "X7", 
+                      "art"))
+  # add art if NA
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X7, art))
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X6, art))
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X5, art))
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X4, art))
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X3, art))
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X2, art))
+  data = data %>% 
+    mutate(art = if_else(is.na(art), X1, art))
+  
+  id = data$old_id[data$treaty == treaty & data$art == article]
+  
+  return(id)
+}
+
+# lookup_id(eulaw, 3, 4)
+
 # lookup id --------------------------------------------------------------------
 # treaty_df: a data frame that contains the parsed treaty
 # idvar: name of id variable, e.g. merger_id, specified not as a string
-lookup_id <- function(treaty_df, idvar, article){
-  if(article == "None"){
-    return("None")
-  }
-  treaty_q <- enquo(treaty_df)
-  treaty_qn <- quo_name(treaty_q)
-  
-  if(!exists(treaty_qn)){
-    # read in csv
-    treaty_df <- read_csv(paste0("data/", treaty_qn, ".csv"))
-    treaty_df <- treaty_df %>% 
-      mutate_all(.funs = funs(as.character))
-  }
-  
-  id_q <- enquo(idvar)
-  regex <- paste0(".+?\\.", article, "$")
-  id <- treaty_df %>% 
-    filter(str_detect(!!id_q, regex) == TRUE) %>% 
-    pull(!!id_q)
-  return(id)
-  
-}
+# lookup_id <- function(treaty_df, idvar, article){
+#  if(article == "None"){
+#    return("None")
+#  }
+#  treaty_q <- enquo(treaty_df)
+#  treaty_qn <- quo_name(treaty_q)
+#  
+#  if(!exists(treaty_qn)){
+#    # read in csv
+#    treaty_df <- read_csv(paste0("data/", treaty_qn, ".csv"))
+#    treaty_df <- treaty_df %>% 
+#      mutate_all(.funs = funs(as.character))
+#  }
+#  
+#  id_q <- enquo(idvar)
+#  regex <- paste0(".+?\\.", article, "$")
+#  id <- treaty_df %>% 
+#    filter(str_detect(!!id_q, regex) == TRUE) %>% 
+#    pull(!!id_q)
+#  return(id)
+#  
+#}
 
 # lookup_id_clip: same as lookup_id but with clipping functionality ------------
 # treaty_df: a data frame that contains the parsed treaty
