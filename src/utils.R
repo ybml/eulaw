@@ -319,6 +319,54 @@ apply_changes <- function(data, changes, year) {
 
 }
 
+# get_founding_treaties: split up an eulaw_ data frame in the founding treaties - #
+get_founding_treaties <- function(data) {
+
+  # data: an eulaw_ dataframe.
+
+  save_treaty <- function(i) {
+    treaty <- dl[[i]] %>%
+      select(!!"id" := old_id, "article", "txt")
+      write_csv(treaty, path = file_names[i])
+  }
+
+  old_id <- get_old_id(data)
+
+  id_split <- pull(data, old_id) %>%
+    str_split(., pattern = "\\.")
+
+  d <- data %>%
+    mutate(treaty_nr = lapply(id_split, first) %>%
+             unlist(),
+           article = lapply(id_split, last) %>%
+             unlist(),
+           treaty_name = case_when(
+                           treaty_nr == 1 ~ "ecsc",
+                           treaty_nr == 2 ~ "euratom",
+                           treaty_nr == 3 ~ "eec",
+                           treaty_nr == 4 ~ "merger",
+                           treaty_nr == 5 ~ "sea",
+                           treaty_nr == 6 ~ "teu",
+                           treaty_nr == 7 ~ "ams",
+                           treaty_nr == 8 ~ "nice",
+                           treaty_nr == 9 ~ "lisbon"
+                         )
+    )
+             
+  dl <- d %>%
+    split(., .$treaty_name)
+  file_names <- paste0("tables/tmp/",
+                       names(dl),
+                       "_",
+                       str_extract(old_id, "\\d{4}"),
+                       ".csv"
+                )
+  lapply(seq_along(dl), save_treaty)
+
+}
+
+
+
 ## # lookup_id --------------------------------------------------------------------
 ## # insert, eulaw, treaty number, article number 
 ## lookup_id = function(data, treaty, article) {
@@ -373,7 +421,7 @@ lookup_id <- function(treaty_df, idvar, article){
  if(!exists(treaty_qn)){
    # read in csv (without printing column specifications)
    suppressMessages(
-     treaty_df <- read_csv(paste0("tables/", treaty_qn, ".csv"))
+     treaty_df <- read_csv(paste0("tables/tmp/", treaty_qn, ".csv"))
    )
    treaty_df <- treaty_df %>% 
      mutate_all(.funs = funs(as.character))
@@ -415,7 +463,7 @@ lookup_id_clip <- function(treaty_df, idvar, article) {
   if(!exists(treaty_qn)){
     # read in csv (without printing column specifications)
     suppressMessages(
-      treaty_df <- read_csv(paste0("tables/", treaty_qn, ".csv"))
+      treaty_df <- read_csv(paste0("tables/tmp/", treaty_qn, ".csv"))
     )
     treaty_df <- treaty_df %>% 
       mutate_all(.funs = funs(as.character))

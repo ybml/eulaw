@@ -9,11 +9,6 @@ rm(list = ls())
 # Functions and data
 source("src/utils.R")
 
-# Example of lookup_id functions ---------------------------------------------- #
-lookup_id_clip(ecsc, id, 27)
-lookup_id(ecsc, id, 27) # Frie's function.
-lookup_id(eulaw, 3, 4) # John's function.
-
 # Examples of each "action" function -------------------------------------------
 
 # repeal 
@@ -77,7 +72,7 @@ add_out <- insert(eulaw_1957,
 
 insert_txt_out <- insert_txt(eulaw_1957, "1.1.X.1", "This is the new text.")
 
-# apply_changes ----------------------------------------------------------------
+# apply_changes: example for merger and sea ---------------------------------- #
 
 # The data.
 rm(list = ls())
@@ -101,7 +96,32 @@ sea_changes <- set_new_txt(sea_changes, "add") %>%
   set_new_id(., "insert", id_field = id) %>%
   set_new_id(., "replace", change_id)
 
-eulaw_1986 <- apply_changes(eulaw_1967, sea_changes, "1986")
+eulaw_1986 <- apply_changes(eulaw_1967, sea_changes, "1986") %>%
+  filter(!is.na(txt)) %>%
+  arrange(id_1986)
 
 saveRDS(eulaw_1967, file = "eulaw_1967.rds")
 saveRDS(eulaw_1986, file = "eulaw_1986.rds")
+
+# Coding workflow example ----------------------------------------------------- #
+# Step 1: apply changes of as given in the <previous treaty>_changes.csv
+# Step 2: generate intermediate dataframes containing id, article number an txt
+#         of for each treaty separately. These CSV-files are used to look up the
+#         ids of the article which are changed and nothing more. Hence they are
+#         saved to "tables/tmp/".
+
+
+# Step 2 example: this generates the files escs_1986, eec_1986.csv, euratom_1986,
+#                 merger_1986, sea_1986.
+get_founding_treaties(eulaw_1986)
+
+# Step 3: make the changes file by hand.
+# Example of lookup_id functions ---------------------------------------------- #
+lookup_id_clip(ecsc_1986, id, 4)
+lookup_id(ecsc_1986, id, 4) # Frie's function.
+# lookup_id(eulaw, 3, 4) # John's function.
+
+teu <- read_csv("tables/teu.csv")
+datatable(teu, width = 1500,
+          options = list(autoWidth = TRUE, pageLength = nrow(teu),
+          columnDefs = list(list(width = '1000px', targets = c(6)))))
