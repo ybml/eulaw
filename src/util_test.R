@@ -9,6 +9,11 @@ rm(list = ls())
 # Functions and data
 source("src/utils.R")
 
+# Example of lookup_id functions ---------------------------------------------- #
+lookup_id_clip(ecsc, id, 27)
+lookup_id(ecsc, id, 27) # Frie's function.
+lookup_id(eulaw, 3, 4) # John's function.
+
 # Examples of each "action" function -------------------------------------------
 
 # repeal 
