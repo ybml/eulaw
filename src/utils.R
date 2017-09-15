@@ -409,7 +409,7 @@ lookup_id <- function(treaty_df, idvar, article){
 
   # treaty_df: a data frame containing id, article numbers and text. 
   # idvar: bare name of the id variable.
-  # article: article number to look up.
+  # article: article number as character to look up.
 
  if(article == "None"){
    return("None")
@@ -443,7 +443,7 @@ lookup_id_clip <- function(treaty_df, idvar, article) {
 
   # treaty_df: a data frame containing id, article numbers and text. 
   # idvar: bare name of the id variable.
-  # article: article number to look up.
+  # article: article number as character to look up.
 
   if (!require(clipr)){
     stop_message <- paste("This version only works with clipr installed.",
