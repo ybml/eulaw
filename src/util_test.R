@@ -2,9 +2,11 @@
 
 # Libraries --------------------------------------------------------------------
 library(tidyverse)
+library(DT)
 
 # Workspace preparation --------------------------------------------------------
 rm(list = ls())
+setwd("..")
 
 # Functions and data
 source("src/utils.R")
