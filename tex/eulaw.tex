@@ -1,0 +1,186 @@
+% Präsentationsvorlage Fionn Gantenbein
+\documentclass[xcolor=dvipsnames]{beamer} %Option ist notwendig um mehr Farben
+					  %zur Verfügung zu haben 
+
+%Packages
+\usepackage[ngerman]{babel}
+\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage{booktabs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			  PERSONALIZE BEMAER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Farben
+\setbeamercolor{topleft}{fg=black,bg=NavyBlue!63}
+\setbeamercolor{bottommiddle}{fg=black,bg=blue!30}
+\setbeamercolor{bottomleft}{fg=black,bg=NavyBlue!60}
+\setbeamercolor{rightish}{fg=black,bg=blue!15}
+
+%Bullets
+\setbeamertemplate{itemize item}[circle]
+
+%Kopfzeile
+\setbeamertemplate{headline}
+{\leavevmode
+\begin{beamercolorbox}[ht=2.5ex,dp=1ex,left,wd=0.5\paperwidth]{topleft}
+\hspace{2ex}\insertsection  
+\end{beamercolorbox}%
+\begin{beamercolorbox}[ht=2.5ex,dp=1ex,right,wd=0.5\paperwidth]{rightish}
+\insertsubsection \hspace{2ex}
+\end{beamercolorbox}
+}
+
+%Fusszeile
+\setbeamertemplate{footline}
+{\leavevmode
+\begin{beamercolorbox}[ht=2.5ex,dp=1ex,left,wd=0.33333333333333333\paperwidth]{bottomleft}
+\hspace{3ex}\insertauthor
+\end{beamercolorbox}%
+\begin{beamercolorbox}[ht=2.5ex,dp=1ex,wd=0.333333333333333333\paperwidth]{bottommiddle}
+\end{beamercolorbox}%
+\begin{beamercolorbox}[ht=2.5ex,dp=1ex,right,wd=0.333333333333333333\paperwidth]{rightish}
+\insertshortdate \hspace{1mm} \insertframenumber/\inserttotalframenumber  \hspace{3ex}
+\end{beamercolorbox}
+}
+
+%Keine Navigationsliste
+\beamertemplatenavigationsymbolsempty
+
+%Overlays
+\setbeamercovered{still covered={\opaqueness<1->{0}},again covered={\opaqueness<1->{15}}}
+
+%Title Autor Datum
+\date{\today}
+\title{Datenprojekt: \texttt{eulaw}}
+\author{F. Preu, J. Körthner, F. Gantenbein}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                  PRESENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\frame{
+\maketitle
+}
+
+\section{Einleitung}
+
+\begin{frame}
+  \frametitle{Zielsetzung}
+  \begin{itemize}
+  \item Datenbank des EU-Primärrechts
+    \begin{itemize}
+    \item Maschinenlesbar
+    \item Reproduzierbar
+    \end{itemize}
+  \item Anwendungsbeispiel: Visualisierung der Entwicklung des EU-Primärrechts
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Weshalb hilft uns Jan Biesenbenders Arbeit nicht?}
+  \begin{enumerate}
+  \item Einheit in Jan Biesenbenders Arbeit sind \enquote{Veränderungen}
+  \item Verträge können nicht wieder auf Artikelebene gebracht werden
+  \item Reproduzierbarkeit: es bleibt unklar auf woher eine Veränderung kommt
+  \end{enumerate}
+\end{frame}
+
+\section{Vorgehensweise}
+\begin{frame}
+  \frametitle{Grundidee}
+  \begin{itemize}
+  \item Wir halten die in den Verträgen festgehaltenen Änderungen fest und
+   führen sie genau wie vorgeschrieben um. 
+ \item Somit:
+   \begin{enumerate}
+   \item jede Veränderung nachvollziehbar
+   \item zu jedem Zeitpunkt gültiges Primärrecht verfügbar
+   \end{enumerate}
+ \item Voraussetzungen:
+   \begin{enumerate}
+   \item Vertragstexte mit Referenznummer die Textstruktur abbildet
+   \item Für jeden Änderungsvertrag einen Veränderungskatalog
+   \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Texte \& Texquelle}
+  \begin{itemize}
+  \item Alle Verträge von \texttt{wikisource.org} 
+    \begin{enumerate}
+    \item Quelle mit deutschen, englischen Originaltexten stand
+    \item Einfach in eine maschinell lesbare Form zu bringen
+    \end{enumerate}
+  \item Konkret: scrapen aller Treaties von \texttt{wikisource.org} und
+    Nachbearbeiten
+  \item Abbildung der Textstruktur in der Referenznummer
+  \item Beispiel: Euratom-Vertrag
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kodieren der Veränderungen}
+  \begin{itemize}
+  \item Schritte:
+    \begin{enumerate}
+    \item Sichtung der Verträge um die unterschiedlichen Anweisungen zu
+      identifizieren
+    \item Die Veränderungskataloge erstellen: Beispiel Merger-Vertag
+    \item Veränderungen ausführen
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Text ersetzen}
+  \begin{itemize}
+  \item \texttt{replace}: einen Artikel mit Referenznummer \texttt{id}
+    ersetzen.
+  \item \texttt{replace\_txt}: in einem Artikel mit Referenznummer \texttt{id},
+   Text finden und ersetzen.
+ \item \texttt{replace\_txt\_globally}: in einem Vertrag mit Referenznummer
+   \texttt{id} einen Ausdruck ersetzen.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Text einfügen}
+  \begin{itemize}
+  \item \texttt{insert}: neuer Artikel mit Referenznummer \texttt{id} zu einem
+    Vertrag hinzufügen
+  \item \texttt{insert\_txt}: einen bestehenden Artikel mit Text ergänzen
+  \item \texttt{add}: neuer, unabhängiger Gesetzestext mit Referenznummer
+    \texttt{id} hinzufügen
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Weitere}
+  \begin{itemize}
+  \item \texttt{repeal}: Artikel aufheben
+  \item \texttt{repeal\_txt}: Artikel teilweise aufheben
+  \item \texttt{renumber}: Artikel neu nummerieren z.B. infolge eines neuen
+    Kapitel      
+  \item Beispiele: Änderungskatalog Merger-Vertag, endgültiger Datensatz.
+  \end{itemize}
+\end{frame}
+
+\section{Ausblick}
+\begin{frame}
+  \frametitle{Was noch gemacht wird}
+  \begin{itemize}
+  \item Alles wird als \texttt{git} zur Verfügung gestellt
+  \item Einfache Visualisierung, Beispiel
+  \end{itemize}
+\end{frame}
+\end{document}
+%EOF
