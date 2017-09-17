@@ -50,6 +50,10 @@ replace_txt_out <- replace_txt(eulaw_1957,
                                text = replace_txt_example$change_txt,
                                replacement_txt = replace_txt_example$new_txt)
 
+# replace_txt_globally: replace in the ecsc-treaty all occurences of "the" with
+# "foo".
+replace_txt_globally_out <- replace_txt_globally(eulaw_1957, 1, "the", "foo")
+  
 # insert
 
 insert_example <- filter(merger_changes, action == "insert")
@@ -90,7 +94,7 @@ merger_changes <- set_new_txt(merger_changes, "add") %>%
   set_new_id(., "insert", id_field = id) %>%
   set_new_id(., "replace", change_id)
 
-eulaw_1967 <- apply_changes(eulaw_1957, merger_changes, "1967")
+eulaw_1965 <- apply_changes(eulaw_1957, merger_changes, "1965")
 
 sea_changes <- set_new_txt(sea_changes, "add") %>%
   mutate(action = if_else(action == "replace_text", "replace_txt", action)) %>%
@@ -98,11 +102,11 @@ sea_changes <- set_new_txt(sea_changes, "add") %>%
   set_new_id(., "insert", id_field = id) %>%
   set_new_id(., "replace", change_id)
 
-eulaw_1986 <- apply_changes(eulaw_1967, sea_changes, "1986") %>%
+eulaw_1986 <- apply_changes(eulaw_1965, sea_changes, "1986") %>%
   filter(!is.na(txt)) %>%
   arrange(id_1986)
 
-saveRDS(eulaw_1967, file = "eulaw_1967.rds")
+saveRDS(eulaw_1965, file = "eulaw_1965.rds")
 saveRDS(eulaw_1986, file = "eulaw_1986.rds")
 
 # Coding workflow example ----------------------------------------------------- #
@@ -124,6 +128,8 @@ lookup_id(ecsc_1986, id, 4) # Frie's function.
 # lookup_id(eulaw, 3, 4) # John's function.
 
 teu <- read_csv("tables/teu.csv")
+teu <- teu %>%
+  select(id, art = article, s_art = subarticle, txt)
 datatable(teu, width = 1500,
           options = list(autoWidth = TRUE, pageLength = nrow(teu),
-          columnDefs = list(list(width = '1000px', targets = c(6)))))
+          columnDefs = list(list(width = '600px', targets = c(4)))))

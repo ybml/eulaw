@@ -183,7 +183,7 @@ replace <- function(data, id, text) {
 }
 
 # replace_txt: replace "text" in article "id" of "data" with "replacement_txt" -#
-replace_txt <- function(data, id, text, replacement_txt){
+replace_txt <- function(data, id, text, replacement_txt) {
 
   # data: an eulaw_ dataframe.
   # id: id of article where text is replaced.
@@ -203,6 +203,31 @@ replace_txt <- function(data, id, text, replacement_txt){
 
   return(data)
   
+}
+
+# replace_txt_globally: replace text globally in a treaty with "id". --------- #
+replace_txt_globally <- function(data, id, pattern, replacement_txt) {
+
+  # data: an eulaw_ dataframe.
+  # id: the id of the treaty where the replacement occurs.
+  # pattern: the text to replace.
+  # replacement_txt: the new text.
+
+  old_id <- get_old_id(data)
+
+  data <- data %>%
+    mutate(treaty_number = str_extract(get(old_id), pattern = "^\\d{1}"))
+
+  data <- data %>%
+    mutate(txt = if_else(treaty_number == id,
+                         str_replace_all(txt, pattern, replacement_txt),
+                         txt
+                 )
+    ) %>%
+    select(-treaty_number)
+                 
+  return(data)
+
 }
 
 # insert: ammend "data" with "id" and "text". -------------------------------- #
