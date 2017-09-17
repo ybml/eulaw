@@ -213,9 +213,38 @@ teu$id = str_replace_all(teu$id, "NA", "X")
 # cut if X is at the end 
 teu$id = str_replace_all(teu$id, ".X$", "")
 
-# changes -------------------------------------------------------------------#
+# Save ----------------------------------------------------------------------- #
 
-write.csv(teu, file = "tables/teu.csv")
+write_csv(teu, path = "tables/teu.csv")
 
-# load change file
-teu = read_csv("tables/teu_changes.csv")
+# Apply changes --------------------------------------------------------------- #
+# Remove all variables except the functions.
+rm(list = setdiff(ls(), lsf.str()))
+
+# Load merger_changes and eulaw_1986 files.
+teu_changes <- read_csv("tables/teu_changes.csv")
+eulaw_1986 <- readRDS("data/eulaw_1986.rds")
+
+# Pre-processing on the changes file.
+teu_changes <- set_new_txt(teu_changes, "add") %>%
+  # For "insert"s change_id instead of new_id was set.
+  mutate(new_id = if_else(is.na(new_id) & action == "insert",
+                          change_id,
+                          new_id
+                  ),
+         change_id = if_else(action == "insert" & !is.na(change_id),
+                             NA_character_,
+                             change_id
+                     )
+  ) %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id) %>%
+  set_new_id(., "replace", change_id)
+
+# Apply the changes.
+eulaw_1992 <- apply_changes(eulaw_1986, teu_changes, "1992") %>%
+  filter(!is.na(txt)) %>%
+  arrange(id_1992)
+
+# Save ---------------------------------------------------------------------- #
+saveRDS(eulaw_1992, file = "data/eulaw_1992.rds")
