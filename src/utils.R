@@ -333,6 +333,12 @@ apply_changes <- function(data, changes, year) {
                     text = change$change_txt,
                     replacement_txt = change$new_txt
         )
+    } else if (action == "replace_txt_globally") {
+      df <- replace_txt_globally(df,
+                                 id  = change_id,
+                                 pattern = change_txt,
+                                 replacement = new_txt
+            )
     } else {
       print_txt <- paste("Catched action:", action)
       print(print_txt)
