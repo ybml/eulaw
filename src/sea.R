@@ -91,105 +91,122 @@ sea = sea %>%
 
 sea$id = str_replace_all(sea$id, "NA", "X")
 
-# changes -------------------------------------------------------------------#
+# changes --------------------------------------------------------------------- #
 
 write_csv(sea, "tables/sea.csv")
 
-# load change file
-sea = read_csv("tables/sea_changes.csv")
+# Apply changes --------------------------------------------------------------- #
+# Remove all variables except the functions.
+rm(list = setdiff(ls(), lsf.str()))
+
+# Load merger_changes and eulaw_1965 files.
+sea_changes <- read_csv("tables/sea_changes.csv")
+eulaw_1965 <- readRDS("data/eulaw_1965.rds")
+
+# Pre-processing on the changes file.
+sea_changes <- set_new_txt(sea_changes, "add") %>%
+  mutate(action = if_else(action == "replace_text", "replace_txt", action)) %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id) %>%
+  set_new_id(., "replace", change_id)
+
+# Apply the changes.
+eulaw_1986 <- apply_changes(eulaw_1965, sea_changes, "1986") %>%
+  filter(!is.na(txt)) %>%
+  arrange(id_1986)
+
+# Save ---------------------------------------------------------------------- #
+saveRDS(eulaw_1986, file = "data/eulaw_1986.rds")
 
 
 
+## # FRIE -------------------------------------------------------------------#
 
-# FRIE -------------------------------------------------------------------#
+## # find ids for eec
+## # sapply(c(7, 49, 54, 56, 57, 57, 149, 237, 238, 145, "None", 188, rep("None", 3), 28, 57, 59, 70, 84, 99), lookup_id, treaty_df = eec, idvar = eec_id) %>% write_clip()
 
-# find ids for eec
-# sapply(c(7, 49, 54, 56, 57, 57, 149, 237, 238, 145, "None", 188, rep("None", 3), 28, 57, 59, 70, 84, 99), lookup_id, treaty_df = eec, idvar = eec_id) %>% write_clip()
+## # 1. read data
 
-# 1. read data
+## # 1.1. read back in sea
+## sea <- read_csv("data/sea.csv")
+## sea <- sea %>% 
+##   mutate_all(funs(as.character))
 
-# 1.1. read back in sea
-sea <- read_csv("data/sea.csv")
-sea <- sea %>% 
-  mutate_all(funs(as.character))
+## # download google sheet data
+## # gs_auth() # run to get access to your sheets
+## # dl_ws("sea") # only run if you have access
 
-# download google sheet data
-# gs_auth() # run to get access to your sheets
-# dl_ws("sea") # only run if you have access
+## # 1.2. changes data
+## sea_changes <- read_csv("data/sea_changes.csv", col_types = "ccccccc")
+## sea_orig <- read_csv("data/sea_orig.csv", col_types = "cc")
+## # no global changes in sea 
 
-# 1.2. changes data
-sea_changes <- read_csv("data/sea_changes.csv", col_types = "ccccccc")
-sea_orig <- read_csv("data/sea_orig.csv", col_types = "cc")
-# no global changes in sea 
+## # 1.3. read in data from previous change round
+## t65 <- read_rds("data/1965.rds")
 
-# 1.3. read in data from previous change round
-t65 <- read_rds("data/1965.rds")
+## # 2. some data cleaning
+## # 2.1. prepare changes data frame 
+## sea_changes <- sea_changes %>% 
+##   mutate(new_txt = if_else(is.na(new_txt) & !is.na(old_txt), "", new_txt)) %>% 
+##   fill(treaty) %>% 
+##   fill(sea_change_id)
 
-# 2. some data cleaning
-# 2.1. prepare changes data frame 
-sea_changes <- sea_changes %>% 
-  mutate(new_txt = if_else(is.na(new_txt) & !is.na(old_txt), "", new_txt)) %>% 
-  fill(treaty) %>% 
-  fill(sea_change_id)
+## # join id from sea (to replace sea_change_id)
+## # NOTE: easier to hand code directly imho
+## sea_changes <- sea_changes %>% 
+##   select(article = sea_change_id, everything()) %>% # rename 
+##   left_join(sea %>% select(article, sea_change_id = sea_id), # rename 
+##                          by = "article") %>% 
+##   select(-article) # drop article column
 
-# join id from sea (to replace sea_change_id)
-# NOTE: easier to hand code directly imho
-sea_changes <- sea_changes %>% 
-  select(article = sea_change_id, everything()) %>% # rename 
-  left_join(sea %>% select(article, sea_change_id = sea_id), # rename 
-                         by = "article") %>% 
-  select(-article) # drop article column
+## # 2.2. prepare original articles
+## # again, add id (this time sea_id)
+## sea_orig <- left_join(sea_orig,
+##                       sea %>% select(sea_id, article, text), 
+##                       by  = "article")
+## sea_orig$current_id <- sea_orig$sea_id
+## sea_orig$article <- NULL
 
-# 2.2. prepare original articles
-# again, add id (this time sea_id)
-sea_orig <- left_join(sea_orig,
-                      sea %>% select(sea_id, article, text), 
-                      by  = "article")
-sea_orig$current_id <- sea_orig$sea_id
-sea_orig$article <- NULL
+## # 3. Apply Changes
+## # 3.1. Manual changes 
 
-# 3. Apply Changes
-# 3.1. Manual changes 
+## # change the affected chapter ids according to Article 20.2 SEA
+## # "2. Chapters 1, 2 and 3 shall become Chapters 2, 3 and 4 respectively."
+## # get the old ids for the affected cases 
+## old_id <- t65 %>% 
+##   filter(treaty == "eec" & str_detect(current_id, "^3\\.2\\.") == TRUE) %>% 
+##   pull(current_id)
 
-# change the affected chapter ids according to Article 20.2 SEA
-# "2. Chapters 1, 2 and 3 shall become Chapters 2, 3 and 4 respectively."
-# get the old ids for the affected cases 
-old_id <- t65 %>% 
-  filter(treaty == "eec" & str_detect(current_id, "^3\\.2\\.") == TRUE) %>% 
-  pull(current_id)
-
-# extract the chapter id which is at the 5th position of the string and add 1 
-new_chapters <- as.integer(str_sub(old_id, 5, 5)) + 1
-
-
-new_id <- paste0(str_sub(old_id, 1, 4), 
-                 new_chapters,
-                 str_sub(old_id, 6))
-
-# replace in original data frame
-t65$current_id[t65$treaty == "eec" & t65$current_id %in% old_id] <- new_id
+## # extract the chapter id which is at the 5th position of the string and add 1 
+## new_chapters <- as.integer(str_sub(old_id, 5, 5)) + 1
 
 
-# 3.2. Changes
+## new_id <- paste0(str_sub(old_id, 1, 4), 
+##                  new_chapters,
+##                  str_sub(old_id, 6))
 
-# test whether all current_ids can be joined 
-tmp <- anti_join(sea_changes, t65, by = c("treaty", "current_id"))
-stopifnot(all(tmp$current_id == "None")) # <- those are the "add"ers, they 
-# naturally do not have a matching id
-rm(tmp)
-
-# join sea_changes to t65
-t86 <- full_join(t65, sea_changes, by = c("treaty", "current_id"))
-
-# apply changes
-t86 <- apply_changes(t86, sea_id)
-
-# 3.3. Add original articles 
-
-# bind together
-t86 <- bind_rows(t86, sea_orig)
-
-# save ------------------------------------------------------------ #
-write_rds(t86, "data/1986.rds")
+## # replace in original data frame
+## t65$current_id[t65$treaty == "eec" & t65$current_id %in% old_id] <- new_id
 
 
+## # 3.2. Changes
+
+## # test whether all current_ids can be joined 
+## tmp <- anti_join(sea_changes, t65, by = c("treaty", "current_id"))
+## stopifnot(all(tmp$current_id == "None")) # <- those are the "add"ers, they 
+## # naturally do not have a matching id
+## rm(tmp)
+
+## # join sea_changes to t65
+## t86 <- full_join(t65, sea_changes, by = c("treaty", "current_id"))
+
+## # apply changes
+## t86 <- apply_changes(t86, sea_id)
+
+## # 3.3. Add original articles 
+
+## # bind together
+## t86 <- bind_rows(t86, sea_orig)
+
+## # save ------------------------------------------------------------ #
+## write_rds(t86, "data/1986.rds")
