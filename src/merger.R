@@ -71,10 +71,10 @@ merger = merger %>%
 
 merger$id = str_replace_all(merger$id, "NA", "X")
 
-# make a change file manually ----------------------------------------------- #
-
 # save
 write_csv(merger, "tables/merger.csv")
+
+# make a change file manually ----------------------------------------------- #
 
 # go through every article and collect changes: 
 # "add", 
@@ -83,33 +83,26 @@ write_csv(merger, "tables/merger.csv")
 # "insert"
 # mark changes to a (for now) irrelevant document with "remnant"
 
-# load change file
-merger = read_csv("tables/merger_changes.csv")
 
-# add new articles ---------------------------------------------------------- #
+# Apply changes ------------------------------------------------------------- #
+# Remove all variables except the functions.
+rm(list = setdiff(ls(), lsf.str()))
 
-# read 
-eulaw = readRDS("data/eulaw_1957.rds")
+# Load merger_changes and eulaw_1957 files.
+merger_changes <- read_csv("tables/merger_changes.csv")
+eulaw_1957 <- readRDS("data/eulaw_1957.rds")
 
-# add
+# Pre-processing on the changes file.
+merger_changes <- set_new_txt(merger_changes, "add") %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id) %>%
+  set_new_id(., "replace", change_id)
 
-# rbind
-eulaw = bind_rows(eulaw, eec)
+# Apply the changes.
+eulaw_1965 <- apply_changes(eulaw_1957, merger_changes, "1965")
 
-# apply changes ------------------------------------------------------------- #
-
-# add id
-eulaw = eulaw %>% 
-  mutate(id = if_else(is.na(id), id_1957, id))
-
-# keep only one id_1957
-eulaw = subset(eulaw, select = c("id_1951", "id", "txt"))
-
-names(eulaw)[names(eulaw)=="id"] = "id_1957"
-
-# save ---------------------------------------------------------------------- #
-
-saveRDS(eulaw, "data/eulaw_1965.rds")
+# Save ---------------------------------------------------------------------- #
+saveRDS(eulaw_1965, "data/eulaw_1965.rds")
 
 
 ## # FRIE ------------------------------------------------------------------- #
