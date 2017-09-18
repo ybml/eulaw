@@ -57,7 +57,7 @@
 %Title Autor Datum
 \date{\today}
 \title{Datenprojekt: \texttt{eulaw}}
-\author{F. Preu, J. Körthner, F. Gantenbein}
+\author{F. Preu, J. Körtner, F. Gantenbein}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,10 +76,10 @@
   \begin{itemize}
   \item Datenbank des EU-Primärrechts
     \begin{itemize}
-    \item Maschinenlesbar
-    \item Reproduzierbar
+    \item Vollständige Erfassung des EU-Primärrechts zu jedem möglichen Zeitpunkt
+    \item Der Text soll anschließend \textit{maschinenlesbar} sein
+    \item Die Erstellung der Datenbank muss \textit{reproduzierbar} sein
     \end{itemize}
-  \item Anwendungsbeispiel: Visualisierung der Entwicklung des EU-Primärrechts
   \end{itemize}
 \end{frame}
 
@@ -89,6 +89,7 @@
   \begin{enumerate}
   \item Einheit in Jan Biesenbenders Arbeit sind \enquote{Veränderungen}
   \item Verträge können nicht wieder auf Artikelebene gebracht werden
+  \item Nur Veränderungen zu dem Vertrag von Lissabon werden erfasst
   \item Reproduzierbarkeit: es bleibt unklar auf woher eine Veränderung kommt
   \end{enumerate}
 \end{frame}
@@ -97,6 +98,7 @@
 \begin{frame}
   \frametitle{Grundidee}
   \begin{itemize}
+  \item Wir speichern den Text aller Veträge
   \item Wir halten die in den Verträgen festgehaltenen Änderungen fest und
    führen sie genau wie vorgeschrieben um. 
  \item Somit:
@@ -174,12 +176,22 @@
   \end{itemize}
 \end{frame}
 
+\section{Vorführung}
+\begin{frame}
+  \frametitle{Vorführung der Datenbank und Visualisierung}
+  \begin{itemize}
+  \item Beispiel: Datenbank als Tabelle
+  \item Beispiel: Visualisierung der ECSC Artikel 
+  \end{itemize}
+\end{frame}
+
 \section{Ausblick}
 \begin{frame}
   \frametitle{Was noch gemacht wird}
   \begin{itemize}
   \item Alles wird als \texttt{git} zur Verfügung gestellt
-  \item Einfache Visualisierung, Beispiel
+  \item Anleitung zum Arbeiten mit der Datenbank
+  \item Visualisierung
   \end{itemize}
 \end{frame}
 \end{document}
