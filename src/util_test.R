@@ -132,4 +132,4 @@ ams <- ams %>%
   select(id, art = article_nr, text)
 datatable(ams, width = 1500,
           options = list(autoWidth = TRUE, pageLength = nrow(ams),
-          columnDefs = list(list(width = '600px', targets = c(4)))))
+          columnDefs = list(list(width = '600px', targets = c(3)))))
