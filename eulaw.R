@@ -40,7 +40,7 @@ source("src/teu.R") # 6
 
 # Amsterdam Treaty ---------------------------------------------------------- #
 
-# source("src/ams.R") # 7
+source("src/amsterdam.R") # 7
 
 # Treaty of Nice ------------------------------------------------------------ #
 
