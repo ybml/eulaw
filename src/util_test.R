@@ -127,6 +127,19 @@ lookup_id_clip(ecsc_1986, id, 4)
 lookup_id(ecsc_1986, id, 4) # Frie's function.
 # lookup_id(eulaw, 3, 4) # John's function.
 
+# Treaty on European Union.
+teu <- read_csv("tables/teu.csv")
+teu <- teu %>%
+  select(id, article, txt)
+datatable(teu, width = 1500,
+          options = list(autoWidth = TRUE, pageLength = nrow(teu),
+          columnDefs = list(list(width = '600px', targets = c(3)))))
+teu_1992 <- read_csv("tables/tmp/teu_1992.csv")
+datatable(teu, width = 1500,
+          options = list(autoWidth = TRUE, pageLength = nrow(teu),
+          columnDefs = list(list(width = '600px', targets = c(3)))))
+
+# Treaty of Amsterdam
 ams <- read_csv("tables/amsterdam.csv")
 ams <- ams %>%
   select(id, art = article_nr, text)
