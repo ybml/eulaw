@@ -107,9 +107,9 @@ amsterdam <- amsterdam %>%
 amsterdam <- amsterdam %>%
   mutate(article_nr = row_number(),
          part_nr = c(rep(1, 5), rep(2, 6), rep(3, 4)),
-         id = paste("ams", part_nr, article_nr, sep = ".")) %>%
+         id = paste(7, part_nr, article_nr, sep = ".")) %>%
   select(id, part_nr, article_nr, part_title, article_title = article, text)
 
 # Export as CSV -----------------------------------------------------------------
-write_csv(amsterdam, path = "../data/amsterdam.csv")
+write_csv(amsterdam, path = "tables/amsterdam.csv")
 # EOF
