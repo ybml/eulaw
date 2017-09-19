@@ -127,9 +127,9 @@ lookup_id_clip(ecsc_1986, id, 4)
 lookup_id(ecsc_1986, id, 4) # Frie's function.
 # lookup_id(eulaw, 3, 4) # John's function.
 
-teu <- read_csv("tables/teu.csv")
-teu <- teu %>%
-  select(id, art = article, s_art = subarticle, txt)
-datatable(teu, width = 1500,
-          options = list(autoWidth = TRUE, pageLength = nrow(teu),
+ams <- read_csv("tables/amsterdam.csv")
+ams <- ams %>%
+  select(id, art = article_nr, text)
+datatable(ams, width = 1500,
+          options = list(autoWidth = TRUE, pageLength = nrow(ams),
           columnDefs = list(list(width = '600px', targets = c(4)))))
