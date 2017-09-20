@@ -112,7 +112,7 @@ sea_changes <- set_new_txt(sea_changes, "add") %>%
 
 # Apply the changes.
 eulaw_1986 <- apply_changes(eulaw_1965, sea_changes, "1986") %>%
-  filter(!is.na(txt)) %>%
+  filter_all(any_vars(!is.na(txt))) %>%
   arrange(id_1986)
 
 # Save ---------------------------------------------------------------------- #
