@@ -371,6 +371,7 @@ sanity_checks <- function(data, changes) {
   # changes: a changes dataframe.
 
   new_id <- get_new_id(data)
+  w_row_number <- c()
 
   # Walk over the changes and check.
   for (i in 1:nrow(changes)) {
@@ -383,24 +384,29 @@ sanity_checks <- function(data, changes) {
         change$action != "replace_txt_globally" &
         !is.na(change$change_id)) {
       warning("Invalid change_id supplied in row ", i)
+      w_row_number <- c(w_row_number, i)
     }
 
     # Check the fields for all actions. 
     if (action == "insert") {
       if (is.na(change$new_id) | is.na(change$new_txt)) {
         warning("new_id or new_txt not set. Check row ", i, " in changes file.")
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "insert_txt") {
       if (is.na(change$change_id) | is.na(change$new_txt)) {
         warning("change_id or new_txt not set. Check row ", i, " in changes file.")
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "renumber") {
       if (is.na(change$change_id) | is.na(change$new_id)) {
         warning("change_id or new_id not set. Check row ", i, " in changes file.")
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "repeal") {
       if (is.na(change$change_id)) {
         warning("change_id not set. Check row ", i, " in changes file.")
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "repeal_txt") {
       if (is.na(change$change_id) | is.na(change$change_txt)) {
@@ -408,6 +414,7 @@ sanity_checks <- function(data, changes) {
              i,
              " in changes file."
         )
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "replace") {
       if (is.na(change$change_id) | is.na(change$new_txt)) {
@@ -415,6 +422,7 @@ sanity_checks <- function(data, changes) {
              i,
              " in changes file."
         ) 
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "replace_txt") {
       if (is.na(change$change_id) | is.na(change$change_txt) |
@@ -423,6 +431,7 @@ sanity_checks <- function(data, changes) {
              i,
              " in changes file."
         ) 
+      w_row_number <- c(w_row_number, i)
       }
     } else if (action == "replace_txt_globally") {
       if (is.na(change$change_id) | is.na(change$change_txt) |
@@ -431,10 +440,12 @@ sanity_checks <- function(data, changes) {
              i,
              " in changes file."
         ) 
+      w_row_number <- c(w_row_number, i)
       }
     }  
   }
-  
+
+  return(w_row_number)
 }
 
 # apply_changes: apply the changes in "changes" to "data" -------------------- #
