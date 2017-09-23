@@ -110,6 +110,9 @@ sea_changes <- set_new_txt(sea_changes, "add") %>%
   set_new_id(., "insert", id_field = id) %>%
   set_new_id(., "replace", change_id)
 
+# Sanity checks.
+sanity_checks(eulaw_1965, sea_changes)
+
 # Apply the changes.
 eulaw_1986 <- apply_changes(eulaw_1965, sea_changes, "1986") %>%
   filter_all(any_vars(!is.na(txt))) %>%

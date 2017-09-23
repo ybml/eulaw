@@ -98,6 +98,9 @@ merger_changes <- set_new_txt(merger_changes, "add") %>%
   set_new_id(., "insert", id_field = id) %>%
   set_new_id(., "replace", change_id)
 
+# Do sanity checks on merger changes.
+sanity_checks(eulaw_1957, merger_changes)
+
 # Apply the changes.
 eulaw_1965 <- apply_changes(eulaw_1957, merger_changes, "1965")
 

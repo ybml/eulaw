@@ -240,6 +240,9 @@ teu_changes <- set_new_txt(teu_changes, "add") %>%
   set_action(old_action = "add", new_action = "insert") %>%
   set_new_id(., "insert", id_field = id)
 
+# Sanity checks.
+sanity_checks(eulaw_1986, teu_changes)
+
 # Apply the changes.
 eulaw_1992 <- apply_changes(eulaw_1986, teu_changes, "1992") %>%
   filter_all(any_vars(!is.na(.))) %>%
