@@ -59,10 +59,26 @@ get_old_id <- function(data) {
   old_id <- str_extract_all(colnames(data), "\\d{4}") %>%
     unlist() %>%
     as.numeric() %>%
-    max() %>%
+    min() %>%
     paste0("id_", .)
 
   return(old_id)
+  
+}
+
+# get_new_id: get the new id from an eulaw_ data-frame ------------------------ #
+
+get_new_id <- function(data) {
+
+  # data: an eulaw_ data-frame.
+  
+  new_id <- str_extract_all(colnames(data), "\\d{4}") %>%
+    unlist() %>%
+    as.numeric() %>%
+    max() %>%
+    paste0("id_", .)
+
+  return(new_id)
   
 }
 
@@ -235,9 +251,9 @@ insert <- function(data, id, txt) {
   # id: the id of the ammended text.
   # text: the new text.
 
-  old_id <- get_old_id(data)
+  new_id <- get_new_id(data)
   
-  df <- data_frame(!!old_id := id, txt)
+  df <- data_frame(!!new_id := id, txt)
   data = bind_rows(data, df)
   
   return(data)
@@ -254,10 +270,12 @@ insert_txt <- function(data, change_id, new_txt) {
  old_id <- get_old_id(data)
   
   data <- data %>%
-    mutate(txt = if_else(get(old_id) == change_id,
-                   paste(txt, new_txt, sep = " "),
-                   txt
-                 )
+    mutate(
+      txt = if_else(
+              get(old_id) == change_id & !is.na(get(old_id)),
+              paste(txt, new_txt, sep = " "),
+              txt
+            )
     )
 
   return(data)
