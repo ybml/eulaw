@@ -145,13 +145,20 @@ repeal <- function(data, change_id) {
   # change_id: id of article to repeal.
 
   old_id <- get_old_id(data)
+  new_id <- get_new_id(data)
 
   data <- data %>%
-    mutate(!!old_id := if_else(get(old_id) == change_id,
-                              NA_character_,
-                              get(old_id)
-                      ),
-           txt = if_else(get(old_id) == change_id, NA_character_, txt)
+    mutate(
+      !!new_id := if_else(
+                    get(old_id) == change_id & !is.na(get(old_id)),
+                    NA_character_,
+                    get(new_id)
+                  ),
+      txt = if_else(
+              get(old_id) == change_id & !is.na(get(old_id)),
+              NA_character_,
+              txt
+            )
     )
   
   return(data)
