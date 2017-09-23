@@ -184,7 +184,7 @@ repeal_txt <- function(data, change_id, change_txt) {
       change_txt,
       "\" not discovered in ",
       change_id,
-      " --- no replacement made."
+      " --- text not repealed."
     )
   } else {
       data <- data %>%
@@ -211,7 +211,12 @@ replace <- function(data, id, text) {
   old_id <- get_old_id(data)
 
   data <- data %>%
-    mutate(txt = if_else(id == get(old_id), text, txt))
+    mutate(
+      txt = if_else(id == get(old_id) & !is.na(get(old_id)),
+                    text,
+                    txt
+            )
+    )
 
   return(data)
   
@@ -227,14 +232,28 @@ replace_txt <- function(data, id, text, replacement_txt) {
 
   old_id <- get_old_id(data)
 
-  data <- data %>%
-    mutate(
-      txt = if_else(
-              get(old_id) == id,
-              str_replace(txt, text, replacement_txt),
-              txt
-            )
+  # Check whether the change_txt exists in txt.
+  chk_txt <- filter(data, id == get(old_id) & !is.na(get(old_id))) %>%
+    pull(txt)
+  
+  if(!str_detect(chk_txt, text)) {
+    warning(
+      "Text \"",
+      text,
+      "\" not discovered in ",
+      id,
+      " --- no replacement made."
     )
+  } else {
+    data <- data %>%
+      mutate(
+        txt = if_else(
+                get(old_id) == id & !is.na(get(old_id)),
+                str_replace(txt, text, replacement_txt),
+                txt
+              )
+      )
+  }
 
   return(data)
   
