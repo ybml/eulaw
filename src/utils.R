@@ -290,9 +290,16 @@ renumber <- function(data, change_id, new_id) {
   # new_id: the new id of an article.
 
   old_id <- get_old_id(data)
+  renumbered_id <- get_new_id(data)
 
   data <- data %>%
-    mutate(!!old_id := if_else(get(old_id) == change_id, new_id, get(old_id)))
+    mutate(
+      !!renumbered_id := if_else(
+                    get(old_id) == change_id & !is.na(get(old_id)),
+                    new_id,
+                    get(renumbered_id)
+        )
+    )
 
   return(data)
   
