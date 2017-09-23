@@ -275,11 +275,11 @@ replace_txt_globally <- function(data, id, pattern, replacement_txt) {
   # Check whether pattern exists in txt.
   chk_txt <- filter(data, treaty_number == id & !is.na(treaty_number)) %>%
     pull(txt)
-  
-  if(!any(str_detect(chk_txt, pattern))) {
+
+  if(!any(str_detect(chk_txt, regex(pattern, ignore_case = TRUE)))) {
     warning(
       "Text \"",
-      text,
+      pattern,
       "\" not discovered in treaty number ",
       id,
       " --- no global replacement possible."
@@ -288,7 +288,11 @@ replace_txt_globally <- function(data, id, pattern, replacement_txt) {
     data <- data %>%
       mutate(
         txt = if_else(treaty_number == id & !is.na(treaty_number),
-                      str_replace_all(txt, pattern, replacement_txt),
+                      str_replace_all(
+                                      txt,
+                                      regex(pattern, ignore_case = TRUE),
+                                      replacement_txt
+                      ),
                       txt
               )
       ) %>%
