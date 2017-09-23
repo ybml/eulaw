@@ -168,20 +168,34 @@ repeal <- function(data, change_id) {
 # repeal_txt: remove change_txt from article with change_id in data ----------- #
 repeal_txt <- function(data, change_id, change_txt) {
 
-  # data: data frame consisting of 3 columns the ids of the two predecessing
-  #       treaties, and txt, the text that goes along with the id.
-  # change_id: the id of the article for which the change occurs.
-  # change_txt: the text to be removed.
+  # data: eulaw_ dataframe.
+  # change_id: the id of the article where text is repealed. 
+  # change_txt: the text to be repealed.
 
   old_id <- get_old_id(data)
+
+  # Check whether the change_txt exists in txt.
+  chk_txt <- filter(data, change_id == get(old_id) & !is.na(get(old_id))) %>%
+    pull(txt)
   
-  data <- data %>%
-  mutate(txt = if_else(
-                 change_id == get(old_id),
-                 str_replace(txt, change_txt, replacement = ""),
-                 txt
-               )
-  )
+  if(!str_detect(chk_txt, change_txt)) {
+    warning(
+      "Text \"",
+      change_txt,
+      "\" not discovered in ",
+      change_id,
+      " --- no replacement made."
+    )
+  } else {
+      data <- data %>%
+        mutate(
+          txt = if_else(
+                  change_id == get(old_id) & !is.na(get(old_id)),
+                  str_replace(txt, change_txt, replacement = ""),
+                  txt
+                )
+        )
+  }
 
   return(data)
 
