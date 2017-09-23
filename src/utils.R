@@ -366,7 +366,7 @@ sanity_checks <- function(data, changes) {
   # data: an eulaw_ dataframe.
   # changes: a changes dataframe.
 
-  old_id <- get_old_id(data)
+  new_id <- get_new_id(data)
 
   # Walk over the changes and check.
   for (i in 1:nrow(changes)) {
@@ -375,7 +375,7 @@ sanity_checks <- function(data, changes) {
     action <- change$action 
 
     # Check whether the supplied id exists.
-    if (!(change$change_id %in% pull(data, old_id)) &
+    if (!(change$change_id %in% pull(data, new_id)) &
         change$action != "replace_txt_globally" &
         !is.na(change$change_id)) {
       warning("Invalid change_id supplied in row ", i)
