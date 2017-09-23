@@ -280,6 +280,79 @@ renumber <- function(data, change_id, new_id) {
   
 }
 
+# check whether the correct fields are set in changes ------------------------ #
+sanity_checks <- function(data, changes) {
+
+  # data: an eulaw_ dataframe.
+  # changes: a changes dataframe.
+
+  old_id <- get_old_id(data)
+
+  # Walk over the changes and check.
+  for (i in 1:nrow(changes)) {
+    
+    change <- changes[i, ] 
+    action <- change$action 
+
+    # Check whether the supplied id exists.
+    if (!(change$change_id %in% pull(data, old_id)) &
+        change$action != "replace_txt_globally" &
+        !is.na(change$change_id)) {
+      warning("Invalid change_id supplied in row ", i)
+    }
+
+    # Check the fields for all actions. 
+    if (action == "insert") {
+      if (is.na(change$new_id) | is.na(change$new_txt)) {
+        warning("new_id or new_txt not set. Check row ", i, " in changes file.")
+      }
+    } else if (action == "insert_txt") {
+      if (is.na(change$change_id) | is.na(change$new_txt)) {
+        warning("change_id or new_txt not set. Check row ", i, " in changes file.")
+      }
+    } else if (action == "renumber") {
+      if (is.na(change$change_id) | is.na(change$new_id)) {
+        warning("change_id or new_id not set. Check row ", i, " in changes file.")
+      }
+    } else if (action == "repeal") {
+      if (is.na(change$change_id)) {
+        warning("change_id not set. Check row ", i, " in changes file.")
+      }
+    } else if (action == "repeal_txt") {
+      if (is.na(change$change_id) | is.na(change$change_txt)) {
+        warning("change_id or change_txt not set. Check row ",
+             i,
+             " in changes file."
+        )
+      }
+    } else if (action == "replace") {
+      if (is.na(change$change_id) | is.na(change$new_txt)) {
+        warning("change_id or new_txt not set. Check row ",
+             i,
+             " in changes file."
+        ) 
+      }
+    } else if (action == "replace_txt") {
+      if (is.na(change$change_id) | is.na(change$change_txt) |
+          is.na(change$new_txt)) {
+        warning("change_id, change_txt, or new_txt not set. Check row ",
+             i,
+             " in changes file."
+        ) 
+      }
+    } else if (action == "replace_txt_globally") {
+      if (is.na(change$change_id) | is.na(change$change_txt) |
+          is.na(change$new_txt)) {
+        warning("change_id, change_txt, or new_txt not set. Check row ",
+             i,
+             " in changes file."
+        ) 
+      }
+    }  
+  }
+  
+}
+
 # apply_changes: apply the changes in "changes" to "data" --------------------- #
 apply_changes <- function(data, changes, year) {
 
@@ -307,76 +380,33 @@ apply_changes <- function(data, changes, year) {
     change <- changes[i, ] 
     action <- change$action 
 
-    # Check whether the supplied id exists.
-    if (!(change$change_id %in% pull(df, new_id)) &
-        change$action != "replace_txt_globally" &
-        !is.na(change$change_id)) {
-      stop("Invalid change_id supplied in row ", i)
-    }
-
     if (action == "insert") {
-      if (is.na(change$new_id) | is.na(change$new_txt)) {
-        stop("new_id or new_txt not set. Check row ", i, " in changes file.")
-      }
+
       df <- insert(df, id = change$new_id, txt = change$new_txt)
     } else if (action == "insert_txt") {
-      if (is.na(change$change_id) | is.na(change$new_txt)) {
-        stop("change_id or new_txt not set. Check row ", i, " in changes file.")
-      }
-      df <- insert_txt(df,
+
+     df <- insert_txt(df,
                        change_id = change$change_id,
                        new_txt = change$new_txt
             )
     } else if (action == "renumber") {
-      if (is.na(change$change_id) | is.na(change$new_id)) {
-        stop("change_id or new_id not set. Check row ", i, " in changes file.")
-      }
       df <- renumber(df, change_id = change$change_id, new_id = change$new_id)
     } else if (action == "repeal") {
-      if (is.na(change$change_id)) {
-        stop("change_id not set. Check row ", i, " in changes file.")
-      }
       df <- repeal(df, change$change_id)
     } else if (action == "repeal_txt") {
-      if (is.na(change$change_id) | is.na(change$change_txt)) {
-        stop("change_id or change_txt not set. Check row ",
-             i,
-             " in changes file."
-        )
-      }
       df <- repeal_txt(df,
                        change_id = change$change_id,
                        change_txt = change$change_txt
             )
     } else if (action == "replace") {
-      if (is.na(change$change_id) | is.na(change$new_txt)) {
-        stop("change_id or new_txt not set. Check row ",
-             i,
-             " in changes file."
-        ) 
-      }
-      df <- replace(df, id = change$change_id, text = change$new_txt)
+     df <- replace(df, id = change$change_id, text = change$new_txt)
     } else if (action == "replace_txt") {
-      if (is.na(change$change_id) | is.na(change$change_txt) |
-          is.na(change$new_txt)) {
-        stop("change_id, change_txt, or new_txt not set. Check row ",
-             i,
-             " in changes file."
-        ) 
-      }
       df <- replace_txt(df,
                     id = change$change_id,
                     text = change$change_txt,
                     replacement_txt = change$new_txt
         )
     } else if (action == "replace_txt_globally") {
-      if (is.na(change$change_id) | is.na(change$change_txt) |
-          is.na(change$new_txt)) {
-        stop("change_id, change_txt, or new_txt not set. Check row ",
-             i,
-             " in changes file."
-        ) 
-      }
       df <- replace_txt_globally(df,
                                  id  = change$change_id,
                                  pattern = change$change_txt,
