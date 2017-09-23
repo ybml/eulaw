@@ -271,15 +271,30 @@ replace_txt_globally <- function(data, id, pattern, replacement_txt) {
 
   data <- data %>%
     mutate(treaty_number = str_extract(get(old_id), pattern = "^\\d{1}"))
+  
+  # Check whether pattern exists in txt.
+  chk_txt <- filter(data, treaty_number == id & !is.na(treaty_number)) %>%
+    pull(txt)
+  
+  if(!any(str_detect(chk_txt, pattern))) {
+    warning(
+      "Text \"",
+      text,
+      "\" not discovered in treaty number ",
+      id,
+      " --- no global replacement possible."
+    )
+  } else {
+    data <- data %>%
+      mutate(
+        txt = if_else(treaty_number == id & !is.na(treaty_number),
+                      str_replace_all(txt, pattern, replacement_txt),
+                      txt
+              )
+      ) %>%
+      select(-treaty_number)
+  }
 
-  data <- data %>%
-    mutate(txt = if_else(treaty_number == id,
-                         str_replace_all(txt, pattern, replacement_txt),
-                         txt
-                 )
-    ) %>%
-    select(-treaty_number)
-                 
   return(data)
 
 }
