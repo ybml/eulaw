@@ -1,6 +1,6 @@
-# ----------------------------------------------------------------------------- #
+# ---------------------------------------------------------------------------- #
 # useful functions
-# ----------------------------------------------------------------------------- #
+# ---------------------------------------------------------------------------- #
 
 # load packages
 require(rvest)
@@ -10,7 +10,7 @@ require(stringr)
 require(tidyr)
 library(tidyverse)
 
-# get_toc: get table of content from wikisource ------------------------------- #
+# get_toc: get table of content from wikisource ------------------------------ #
 
 get_toc <- function(html){
   
@@ -46,11 +46,11 @@ get_toc <- function(html){
   return(toc)
 }
 
-# trim: trim whitespace ------------------------------------------------------- #
+# trim: trim whitespace ------------------------------------------------------ #
 
 trim = function (x) gsub("^\\s+|\\s+$", "", x)
 
-# get_old_id: get the old id from an eulaw_ data-frame ------------------------ #
+# get_old_id: get the old id from an eulaw_ data-frame ----------------------- #
 
 get_old_id <- function(data) {
 
@@ -66,7 +66,7 @@ get_old_id <- function(data) {
   
 }
 
-# get_new_id: get the new id from an eulaw_ data-frame ------------------------ #
+# get_new_id: get the new id from an eulaw_ data-frame ----------------------- #
 
 get_new_id <- function(data) {
 
@@ -82,7 +82,7 @@ get_new_id <- function(data) {
   
 }
 
-# set_new_id: set "new_id" to "id_field" if "new_id" is NA. ------------------- #
+# set_new_id: set "new_id" to "id_field" if "new_id" is NA. ------------------ #
 set_new_id  <- function(changes, directive, id_field) {
 
   # changes: a _changes dataframe.
@@ -101,7 +101,7 @@ set_new_id  <- function(changes, directive, id_field) {
   
 }
 
-# set_new_txt: set the new_txt variable for "directive" if field is NA. ------- #
+# set_new_txt: set the new_txt variable for "directive" if field is NA. ------ #
 set_new_txt <- function(changes, directive) {
 
   # changes: a _changes dataframe.
@@ -119,7 +119,7 @@ set_new_txt <- function(changes, directive) {
 
 }
 
-# set_action: set "old_action" to "new_action" in "changes". ----------------- #
+# set_action: set "old_action" to "new_action" in "changes". ---------------- #
 set_action <- function(changes, old_action, new_action) {
 
   # changes: a _changes dataframe.
@@ -138,7 +138,7 @@ set_action <- function(changes, old_action, new_action) {
 
 }
 
-# repeal: set id and text of article specified by change_id in data to NA ----- #
+# repeal: set id and text of article specified by change_id in data to NA ---- #
 repeal <- function(data, change_id) {
 
   # data: an eulaw_ dataframe.
@@ -165,7 +165,7 @@ repeal <- function(data, change_id) {
 
 }
 
-# repeal_txt: remove change_txt from article with change_id in data ----------- #
+# repeal_txt: remove change_txt from article with change_id in data ---------- #
 repeal_txt <- function(data, change_id, change_txt) {
 
   # data: eulaw_ dataframe.
@@ -201,7 +201,7 @@ repeal_txt <- function(data, change_id, change_txt) {
 
 }
 
-# replace: replace the article text of article with id in data by new text ---- #
+# replace: replace the article text of article with id in data by new text --- #
 replace <- function(data, id, text) {
 
   # data: eulaw_ dataframe.
@@ -259,7 +259,7 @@ replace_txt <- function(data, id, text, replacement_txt) {
   
 }
 
-# replace_txt_globally: replace text globally in a treaty with "id". ---------- #
+# replace_txt_globally: replace text globally in a treaty with "id". --------- #
 replace_txt_globally <- function(data, id, pattern, replacement_txt) {
 
   # data: an eulaw_ dataframe.
@@ -299,7 +299,7 @@ replace_txt_globally <- function(data, id, pattern, replacement_txt) {
 
 }
 
-# insert: ammend "data" with "id" and "text". --------------------------------- #
+# insert: ammend "data" with "id" and "text". -------------------------------- #
 insert <- function(data, id, txt) {
 
   # data: an eulaw_ dataframe.
@@ -315,7 +315,7 @@ insert <- function(data, id, txt) {
 
 }
 
-# insert_txt: ammend article specified by "change_id" in "data" with "new_txt"- #
+# insert_txt: ammend article specified by "change_id" in "data" with "new_txt" #
 insert_txt <- function(data, change_id, new_txt) {
 
   # data: an eulaw_ dataframe.
@@ -337,7 +337,7 @@ insert_txt <- function(data, change_id, new_txt) {
   
 }
 
-# renumber: set id for article identified by "change_id" to "new_id" ---------- #
+# renumber: set id for article identified by "change_id" to "new_id" --------- #
 renumber <- function(data, change_id, new_id) {
 
   # data: an eulaw_ dataframe.
@@ -360,7 +360,7 @@ renumber <- function(data, change_id, new_id) {
   
 }
 
-# check whether the correct fields are set in changes ------------------------ #
+# check whether the correct fields are set in changes ----------------------- #
 sanity_checks <- function(data, changes) {
 
   # data: an eulaw_ dataframe.
@@ -433,7 +433,7 @@ sanity_checks <- function(data, changes) {
   
 }
 
-# apply_changes: apply the changes in "changes" to "data" --------------------- #
+# apply_changes: apply the changes in "changes" to "data" -------------------- #
 apply_changes <- function(data, changes, year) {
 
   # data: an eulaw_ dataframe.
@@ -441,13 +441,7 @@ apply_changes <- function(data, changes, year) {
   # year: the year postfix of the new id variable.
   
   # Step 1: construct the new data frame.
-
-  current_id <- str_extract_all(colnames(data), "\\d{4}") %>%
-    unlist() %>%
-    as.numeric() %>%
-    max() %>%
-    paste0("id_", .)
-    
+  current_id <- get_new_id(data)    
   new_id <- paste0("id_", as.character(year))
 
   df <- data %>%
@@ -461,10 +455,8 @@ apply_changes <- function(data, changes, year) {
     action <- change$action 
 
     if (action == "insert") {
-
       df <- insert(df, id = change$new_id, txt = change$new_txt)
     } else if (action == "insert_txt") {
-
      df <- insert_txt(df,
                        change_id = change$change_id,
                        new_txt = change$new_txt
@@ -485,7 +477,7 @@ apply_changes <- function(data, changes, year) {
                     id = change$change_id,
                     text = change$change_txt,
                     replacement_txt = change$new_txt
-        )
+            )
     } else if (action == "replace_txt_globally") {
       df <- replace_txt_globally(df,
                                  id  = change$change_id,
@@ -549,7 +541,7 @@ get_founding_treaties <- function(data) {
 
 }
 
-# lookup id: look up the id specified in "idvar" of "article" in "treaty_df" -- #
+# lookup id: look up the id specified in "idvar" of "article" in "treaty_df" - #
 lookup_id <- function(treaty_df, idvar, article){
 
   # treaty_df: a data frame containing id, article numbers and text. 
@@ -583,7 +575,7 @@ lookup_id <- function(treaty_df, idvar, article){
  
 }
 
-# lookup_id_clip: additionally copies the id to the clipboard ----------------- #
+# lookup_id_clip: additionally copies the id to the clipboard ---------------- #
 lookup_id_clip <- function(treaty_df, idvar, article) {
 
   # treaty_df: a data frame containing id, article numbers and text. 
@@ -623,5 +615,4 @@ lookup_id_clip <- function(treaty_df, idvar, article) {
 
   return(id)
 }
-
 #EOF
