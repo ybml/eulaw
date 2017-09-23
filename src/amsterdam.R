@@ -5,10 +5,10 @@ library(tidyverse)
 library(rvest)
 library(stringr)
 library(purrrlyr)
-library(data.table)
 
 # Workspace preparation ---------------------------------------------------------
 rm(list = ls())
+source("src/utils.R")
 
 # Get HTML and extract the links ------------------------------------------------
 am <- read_html("https://en.wikisource.org/wiki/Treaty_of_Amsterdam")
@@ -112,4 +112,42 @@ amsterdam <- amsterdam %>%
 
 # Export as CSV -----------------------------------------------------------------
 write_csv(amsterdam, path = "tables/amsterdam.csv")
+
+# Apply changes --------------------------------------------------------------- #
+# Remove all variables except the functions.
+rm(list = setdiff(ls(), lsf.str()))
+
+# Load merger_changes and eulaw_1992 files.
+ams_changes <- read_csv("tables/amsterdam_changes.csv")
+eulaw_1992 <- readRDS("data/eulaw_1992.rds")
+
+
+ams_changes <- ams_changes %>%
+  mutate(new_id = if_else(is.na(new_id) & action == "insert",
+                          change_id,
+                          new_id
+                  ),
+         change_id = if_else(action == "insert" & !is.na(change_id),
+                             NA_character_,
+                             change_id
+                     )
+  )
+write_csv(ams_changes,  path = "tables/amsterdam_changes.csv")  
+
+# Sanity checks.
+rn <- sanity_checks(eulaw_1992, ams_changes)
+
+# Pre-processing on the changes file.
+ams_changes <- set_new_txt(ams_changes, "add") %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id)
+
+
+# Apply the changes.
+eulaw_1997 <- apply_changes(eulaw_1992, ams_changes, "1997") %>%
+  filter_all(any_vars(!is.na(.))) %>%
+  arrange(id_1997)
+
+# Save ---------------------------------------------------------------------- #
+saveRDS(eulaw_1997, file = "data/eulaw_1997.rds")
 # EOF
