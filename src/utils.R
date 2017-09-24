@@ -517,13 +517,13 @@ get_founding_treaties <- function(data) {
 
   save_treaty <- function(i) {
     treaty <- dl[[i]] %>%
-      select(!!"id" := old_id, "article", "txt")
+      select(!!"id" := new_id, "article", "txt")
       write_csv(treaty, path = file_names[i])
   }
 
-  old_id <- get_old_id(data)
+  new_id <- get_new_id(data)
 
-  id_split <- pull(data, old_id) %>%
+  id_split <- pull(data, new_id) %>%
     str_split(., pattern = "\\.")
 
   d <- data %>%
@@ -549,7 +549,7 @@ get_founding_treaties <- function(data) {
   file_names <- paste0("tables/tmp/",
                        names(dl),
                        "_",
-                       str_extract(old_id, "\\d{4}"),
+                       str_extract(new_id, "\\d{4}"),
                        ".csv"
                 )
   lapply(seq_along(dl), save_treaty)
