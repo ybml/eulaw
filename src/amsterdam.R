@@ -135,13 +135,12 @@ ams_changes <- ams_changes %>%
 write_csv(ams_changes,  path = "tables/amsterdam_changes.csv")  
 
 # Sanity checks.
-rn <- sanity_checks(eulaw_1992, ams_changes)
+sanity_checks(eulaw_1992, ams_changes)
 
 # Pre-processing on the changes file.
 ams_changes <- set_new_txt(ams_changes, "add") %>%
   set_action(old_action = "add", new_action = "insert") %>%
   set_new_id(., "insert", id_field = id)
-
 
 # Apply the changes.
 eulaw_1997 <- apply_changes(eulaw_1992, ams_changes, "1997") %>%
