@@ -149,4 +149,15 @@ eulaw_1997 <- apply_changes(eulaw_1992, ams_changes, "1997") %>%
 
 # Save ---------------------------------------------------------------------- #
 saveRDS(eulaw_1997, file = "data/eulaw_1997.rds")
+
+# Renumbering --------------------------------------------------------------- #
+ams_changes_renumber <- read_csv("tables/amsterdam_changes_renumber.csv")
+
+# Sanity checks. 
+sanity_checks(eulaw_1997, ams_changes_renumber)
+
+# Apply the renumbering.
+eulaw_1997r <- apply_changes(eulaw_1997, ams_changes_renumber, "1998")
+
+saveRDS(eulaw_1997r, file = "data/eulaw_1998.rds")
 # EOF
