@@ -44,7 +44,7 @@ source("src/amsterdam.R") # 7
 
 # Treaty of Nice ------------------------------------------------------------ #
 
-# source("src/nice.R") # 8
+source("src/nice.R") # 8
 
 # Treaty of Lisbon ---------------------------------------------------------- #
 
