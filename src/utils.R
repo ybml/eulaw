@@ -178,7 +178,7 @@ repeal_txt <- function(data, change_id, change_txt) {
   chk_txt <- filter(data, change_id == get(old_id) & !is.na(get(old_id))) %>%
     pull(txt)
   
-  if(!str_detect(chk_txt, change_txt)) {
+  if(!all(str_detect(chk_txt, change_txt))) {
     warning(
       "Text \"",
       change_txt,
