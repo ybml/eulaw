@@ -68,4 +68,23 @@ nice <- nice %>%
   select(id, part_nr, art_nr, txt = art_txt)
 
 write_csv(nice, path = "tables/nice.csv")
+
+# Apply the changes --------------------------------------------------------- #
+rm(list = ls())
+source("src/utils.R")
+
+eulaw_1998 <- readRDS("data/eulaw_1998.rds")
+nice_changes <- read_csv("tables/nice_changes.csv")
+
+# Sanity checks.
+sanity_checks(eulaw_1998, nice_changes)
+
+# Pre-processing on the changes file.
+nice_changes <- set_new_txt(nice_changes, "add") %>%
+  set_action(old_action = "add", new_action = "insert") %>%
+  set_new_id(., "insert", id_field = id)
+
+eulaw_2001 <- apply_changes(eulaw_1998, nice_changes, "2001")
+
+saveRDS(eulaw_2001, file = "data/eulaw_2001.rds")
 #EOF
