@@ -9,6 +9,8 @@ require(purrrlyr)
 require(stringr)
 require(tidyr)
 library(tidyverse)
+library(diffobj)
+library(rlang)
 
 # get_toc: get table of content from wikisource ------------------------------ #
 
@@ -82,6 +84,146 @@ get_new_id <- function(data) {
   
 }
 
+# get_treaty: get all versions of a treaty ----------------------------------- #
+get_treaty <- function(treaty_name) {
+
+  # treaty_name: the name of the treaty to get.
+  
+  # Quote the treaty name.
+  tnq <- enquo(treaty_name)
+  tn <- quo_name(tnq)
+
+  # Check whether the year and the treaty name are sound.
+  valid_treaty(tn)
+
+  # Get the data.
+  data <- readRDS("data/eulaw_long.rds")
+
+  # Select the treaty.
+  data <- data %>%
+    filter(treaty == tn)
+
+  return(data)
+
+}
+
+# get_year: law in force in a specific year ---------------------------------- #
+get_year <- function(year) {
+
+  # Valid year?
+  valid_year(year)
+
+  # Get the data.
+  data <- readRDS("data/eulaw_long.rds")
+
+  # Select the treaty.
+  y <- year # Avoid name clash
+  data <- data %>%
+    filter(year == y)
+
+  return(data)
+
+}
+
+# get_treaty_year: a treaty in a specific year ------------------------------- # 
+get_treaty_year <- function(treaty_name, year) {
+
+  # treaty_name: the name of the treaty to get.
+  # year: the year for which the treaty should be extracted
+  
+  # Quote the treaty name.
+  tnq <- enquo(treaty_name)
+  tn <- quo_name(tnq)
+
+  # Check whether the year and the treaty name are sound.
+  valid_year(year)
+  valid_treaty(tn)
+
+  # Is the treaty in force?
+  treaty_in_force(tn, year)
+
+  # Get the data.
+  data <- readRDS("data/eulaw_long.rds")
+
+  # Select the treaty.
+  y <-  year # Avoid name clash
+  data <- data %>%
+    filter(treaty == tn & year == y)   
+
+  return(data)
+
+}
+
+# get_article_ids: get ids of an article in the treaties --------------------- #
+get_article_ids <- function(treaty_name, article_number) {
+
+  # treaty_name: the name of the treaty.
+  # article_number: the article number.
+
+  # Quote the treaty name.
+  tnq <- enquo(treaty_name)
+  tn <- quo_name(tnq)
+
+  # Does the treaty exist?
+  valid_treaty(tn)
+  
+  # Get the treaty.
+  data <- get_treaty(!!tnq)
+  
+  # Get the article ids.
+  ptrn <- paste0(".+?\\.", article_number, "$")
+  article_id <- data %>% 
+    filter(str_detect(id, ptrn) == TRUE) %>% 
+    pull(id)
+
+  # Stop if no id was not found.
+  if(length(article_id) == 0L) {
+    stop("The article ",
+         article_number,
+         " does not exist in the given  treaty.")
+  }
+
+  return(article_id)
+
+}
+
+
+# get_article_id: get the id of an article in a specific year ---------------- #
+get_article_id <- function(treaty_name, article_number, year) {
+
+  # treaty_name: the name of the treaty.
+  # article_number: the article number.
+  # year: the year.
+
+  # Quote the treaty name.
+  tnq <- enquo(treaty_name)
+  tn <- quo_name(tnq)
+
+  # Validity checks. 
+  valid_treaty(tn)
+  valid_year(year)
+  treaty_in_force(tn, year)
+  
+  # Get the treaty.
+  data <- get_treaty_year(!!tnq, year)
+  
+  # Get the article ids.
+  ptrn <- paste0(".+?\\.", article_number, "$")
+  article_id <- data %>% 
+    filter(str_detect(id, ptrn) == TRUE) %>% 
+    pull(id)
+
+  # Stop if no id was not found.
+  if(length(article_id) == 0L) {
+    stop("The article ",
+         article_number,
+         " does not exist in the given  treaty.")
+  }
+
+  return(article_id)
+
+}
+
 # set_new_id: set "new_id" to "id_field" if "new_id" is NA. ------------------ #
 set_new_id  <- function(changes, directive, id_field) {
 
@@ -136,6 +278,56 @@ set_action <- function(changes, old_action, new_action) {
 
   return(changes) 
 
+}
+
+# valid_year: check whether the supplied year is in the covered range -------- #
+valid_year <- function(year) {
+
+  # year: the supplied year.
+
+  if (year < 1951 | year > 2001) {
+    stop("The covered years are 1951-2001.\n",
+         "You supplied the year ", year, " which is not in this range.")
+  }
+  
+}
+
+# valid_treaty: check whether the supplied treaty name exists ---------------- #
+valid_treaty <- function(treaty_name) {
+
+  # treaty_name: the supplied treaty name.
+
+  treaty_names <- c("ecsc", "euratom", "eec", "merger", "sea", "teu",
+                    "amsterdam", "nice", "lisbon")
+ 
+  if (!(treaty_name %in% treaty_names)) {
+    stop("The treaty name ", treaty_name, " does not exist.",
+         "\n Supply one of: \"", paste(treaty_names, collapse = ", "), "\".")
+  }
+  
+}
+
+# treaty_in_force: check whether a treaty is in force in a given year -------- #
+treaty_in_force <- function(treaty_name, year) {
+
+  # treaty_name: the treaty to look for.
+  # year: the year.
+
+  pred_q <- quo(
+              (treaty_name == "euratom"   & year < 1957) |
+              (treaty_name == "eec"       & year < 1957) |
+              (treaty_name == "merger"    & year < 1965) |
+              (treaty_name == "sea"       & year < 1986) |
+              (treaty_name == "teu"       & year < 1992) |
+              (treaty_name == "amsterdam" & year < 1997) |
+              (treaty_name == "nice"      & year < 2001) |
+              (treaty_name == "lisbon"    & year < 2007)
+            )
+
+  if (eval_tidy(pred_q)) {
+    stop("The treaty \"", treaty_name, "\" is not in force in year ", year, ".")
+  }
+  
 }
 
 # repeal: set id and text of article specified by change_id in data to NA ---- #
@@ -222,7 +414,7 @@ replace <- function(data, id, text) {
   
 }
 
-# replace_txt: replace "text" in article "id" of "data" with "replacement_txt" -#
+# replace_txt: replace "text" in article "id" of "data" with "replacement_txt" #
 replace_txt <- function(data, id, text, replacement_txt) {
 
   # data: an eulaw_ dataframe.
@@ -630,4 +822,116 @@ lookup_id_clip <- function(treaty_df, idvar, article) {
 
   return(id)
 }
+
+
+
+# get_article: get an article of a treaty  ----------------------------------- #
+get_article <- function(treaty_name, year, article_number) {
+
+  # treaty_name: a treaty name.
+  # year: the year for which the article shall be displayed.
+  # article_number: the number of the article
+
+  # Quote the treaty name.
+  tnq <- enquo(treaty_name)
+
+  # Get the treaty.
+  data <- get_treaty_year(!!tnq, year)
+    
+  # Get the article id.
+  article_id <- get_article_id(!!tnq, article_number, year)
+
+  # Extract the article.
+  article_txt <- data %>%
+    filter(id == article_id) %>%
+    pull(txt)
+
+  return(article_txt) 
+
+}
+
+# article_history: all versions of an article in a treaty -------------------- #
+article_history <- function(treaty_name, article_number, year) {
+
+  # treaty_name: the name of the treaty.
+  # article_number: the number of the article.
+  # year: the year for which the article has number "article_number".
+
+  # Quote the treaty_name.
+  tnq <- enquo(treaty_name)
+  tn <- quo_name(tnq)
+  
+  # Check whether the arguments are sound.
+  valid_treaty(tn)
+  valid_year(year)
+  treaty_in_force(tn, year)
+
+  # Get the data.
+  data <- readRDS("data/eulaw.rds")
+  
+  # The name of the id variable
+  idn <- paste0("id_", year)
+  idq <- quo(!!sym(idn))
+
+  data <- data %>%
+    mutate(
+      treaty_nr = str_extract(!!idq, "^\\d"),
+      treaty = case_when(
+                 treaty_nr == 1 ~ "ecsc",
+                 treaty_nr == 2 ~ "euratom",
+                 treaty_nr == 3 ~ "eec",
+                 treaty_nr == 4 ~ "merger",
+                 treaty_nr == 5 ~ "sea",
+                 treaty_nr == 6 ~ "teu",
+                 treaty_nr == 7 ~ "amsterdam",
+                 treaty_nr == 8 ~ "nice",
+                 treaty_nr == 9 ~ "lisbon"
+               )
+    ) %>%
+    select(-treaty_nr)
+      
+  # Article id.
+  article_id <- get_article_id(!!tnq, article_number, year)
+
+  data <- data %>%
+    filter((!!idq) == article_id) %>%
+    select(-treaty)
+
+  return(data)
+  
+}
+
+# article_pair_diff: show the diff between two articles ---------------------- #
+article_pair_diff <- function(treaty_name, article_number, src_year, tgt_year) {
+
+  # treaty_name: the name of a treaty.
+  # article_number: the number of the article to compare.
+  # src_year: the "original" year.
+  # tgt_year: the "new" year.
+
+  # Quote the treaty name.
+  tnq <- enquo(treaty_name)
+
+  src <- get_article(!!tnq, src_year, article_number)
+  tgt <- get_article(!!tnq, tgt_year, article_number)
+
+  diffChr(src, tgt, mode = "sidebyside")
+}
+
 #EOF
+
+  ## # Quote the treat name.
+  ## tnq <- enquo(treaty_name)
+
+  ## # Get the treaty
+  ## data <- get_treaty(!!tnq)
+
+  ## # Get the article ids.
+  ## article_ids <- get_article_ids(!!tnq, article_number)
+
+  ## # Subset
+  ## articles <- data %>%
+  ##   filter(id %in%  article_ids) %>%
+  ##   select(Year = year, Article = txt)
+
+  ## return(articles)
