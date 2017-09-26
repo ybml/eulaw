@@ -187,7 +187,6 @@ get_article_ids <- function(treaty_name, article_number) {
 
 }
 
-
 # get_article_id: get the id of an article in a specific year ---------------- #
 get_article_id <- function(treaty_name, article_number, year) {
 
@@ -285,9 +284,10 @@ valid_year <- function(year) {
 
   # year: the supplied year.
 
-  if (year < 1951 | year > 2001) {
-    stop("The covered years are 1951-2001.\n",
-         "You supplied the year ", year, " which is not in this range.")
+  years <- c(1951, 1957, 1965, 1986, 1992, 1997, 2001, 2007)
+  if (!(year %in% years)) {
+    stop("The year ", year, " is not covered.\n",
+         "Supply one of: \"", paste(years, collapse = ", "), "\".")
   }
   
 }
@@ -702,7 +702,7 @@ apply_changes <- function(data, changes, year) {
 
 }
 
-# get_founding_treaties: split up an eulaw_ data frame in the founding treaties #
+# get_founding_treaties: split up an eulaw_ data frame in the founding treaties#
 get_founding_treaties <- function(data) {
 
   # data: an eulaw_ dataframe.
@@ -823,8 +823,6 @@ lookup_id_clip <- function(treaty_df, idvar, article) {
   return(id)
 }
 
-
-
 # get_article: get an article of a treaty  ----------------------------------- #
 get_article <- function(treaty_name, year, article_number) {
 
@@ -919,19 +917,3 @@ article_pair_diff <- function(treaty_name, article_number, src_year, tgt_year) {
 }
 
 #EOF
-
-  ## # Quote the treat name.
-  ## tnq <- enquo(treaty_name)
-
-  ## # Get the treaty
-  ## data <- get_treaty(!!tnq)
-
-  ## # Get the article ids.
-  ## article_ids <- get_article_ids(!!tnq, article_number)
-
-  ## # Subset
-  ## articles <- data %>%
-  ##   filter(id %in%  article_ids) %>%
-  ##   select(Year = year, Article = txt)
-
-  ## return(articles)
