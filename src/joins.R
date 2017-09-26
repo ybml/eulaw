@@ -94,6 +94,51 @@ eulaw <- full_join(eulaw_1951, eulaw_1957, by = c("id_1951" = "id_1951")) %>%
     txt_2001 = txt) %>%
   mutate_at(vars(contains("id")),
             funs(if_else(. == "repealed", NA_character_, .))
-  )
+  ) %>%
+  mutate(id_1997 = id_1998, txt_1997 = txt_1998) %>%
+  select(-contains("1998"))
 
+# eulaw long.
+years <- c(1951, 1957, 1965, 1986, 1992, 1997, 1998, 2001)
+eulaw_long <- lapply(years,
+                     function(y) {
+
+                       eulaw_n <- paste0("eulaw_", y)
+                       eulaw_q <- quo(!!sym(eulaw_n))
+                       id_n <- paste0("id_", y)
+                       id_q <- quo(!!sym(id_n))
+              
+                       eval_tidy(eulaw_q) %>%
+                         mutate(year = y) %>%
+                         select(id = !!id_n, year, txt)
+                     }
+              ) %>%
+  bind_rows() %>%
+  filter(!is.na(id))
+
+# Remove artificial year
+eulaw_long <- eulaw_long %>%
+  filter(year != 1997) %>%
+  mutate(year = if_else(year == 1998, 1997, year))
+
+
+# Add treaty name to long format.
+eulaw_long <- eulaw_long %>%
+  mutate(
+    treaty_nr = str_extract(id, "^\\d"),
+    treaty = case_when(
+                treaty_nr == 1 ~ "ecsc",
+                treaty_nr == 2 ~ "euratom",
+                treaty_nr == 3 ~ "eec",
+                treaty_nr == 4 ~ "merger",
+                treaty_nr == 5 ~ "sea",
+                treaty_nr == 6 ~ "teu",
+                treaty_nr == 7 ~ "amsterdam",
+                treaty_nr == 8 ~ "nice",
+                treaty_nr == 9 ~ "lisbon"
+             )
+  ) %>%
+  select(id, treaty, year, txt)
+  
 saveRDS(eulaw, file = "data/eulaw.rds")
+saveRDS(eulaw_long, file = "data/eulaw_long.rds")
